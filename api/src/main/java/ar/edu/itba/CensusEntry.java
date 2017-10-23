@@ -51,4 +51,32 @@ public class CensusEntry implements DataSerializable {
         this.department = objectDataInput.readUTF();
         this.province = objectDataInput.readUTF();
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        CensusEntry that = (CensusEntry) o;
+        return homeId == that.homeId && status == that.status && department.equals(that.department) && province.equals(that.province);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = status.hashCode();
+        result = 31 * result + (int) (homeId ^ (homeId >>> 32));
+        result = 31 * result + department.hashCode();
+        result = 31 * result + province.hashCode();
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "CensusEntry{" +
+                "status=" + status +
+                ", homeId=" + homeId +
+                ", department='" + department + '\'' +
+                ", province='" + province + '\'' +
+                '}';
+    }
 }
