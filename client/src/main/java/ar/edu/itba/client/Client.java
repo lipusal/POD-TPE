@@ -24,6 +24,7 @@ public class Client {
                 .addObject(parsedArgs)
                 .build()
                 .parse(allArguments.toArray(new String[0]));
+        parsedArgs.postValidate();
 
         logger.info("Client starting ...");
         final ClientConfig ccfg = new ClientConfig();
