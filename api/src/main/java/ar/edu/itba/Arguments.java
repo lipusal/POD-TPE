@@ -134,6 +134,9 @@ public class Arguments implements DataSerializable {
         return prov;
     }
 
+    /**
+     * Splits a single comma-separated string argument to various IP addresses.
+     */
     private static class CommaSeparator implements IStringConverter<List<InetAddress>> {
         InetAddressConverter converter = new InetAddressConverter();
 
@@ -143,6 +146,9 @@ public class Arguments implements DataSerializable {
         }
     }
 
+    /**
+     * Validates that a file argument refers to a file that exists.
+     */
     private static class FileExistsValidator implements IParameterValidator {
         @Override
         public void validate(String name, String value) throws ParameterException {
