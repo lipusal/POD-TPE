@@ -97,7 +97,7 @@ public class Arguments implements DataSerializable {
             throw new ParameterException("Query number must be between 1 and 7");
         }
         if(n != null) {
-            if(n != 2 && n != 6 && n != 7) {
+            if(queryNumber != 2 && queryNumber != 6 && queryNumber != 7) {
                 throw new ParameterException("-n parameter may only be used with query numbers 2, 6, 7");
             }
         }
