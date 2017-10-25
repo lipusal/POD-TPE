@@ -24,10 +24,10 @@ public class Arguments implements DataSerializable {
 
     private static final List<String> KNOWN_PROPERTIES = Arrays.asList("addresses", "query", "inPath", "outPath", "timeOutPath", "n", "prov");
 
-    @Parameter(names = {"-addresses", "-a"}, description = "Node IP addresses", required = true, listConverter = CommaSeparator.class)  // TODO use IP class directly?
+    @Parameter(names = {"-addresses", "-a"}, description = "Node IP addresses", required = true, listConverter = CommaSeparator.class)
     private List<InetAddress> nodeIps;
 
-    @Parameter(names = {"-query", "-q"}, description = "Query number to execute", required = true, converter = IntegerConverter.class) // TODO validate min/max
+    @Parameter(names = {"-query", "-q"}, description = "Query number to execute", required = true, converter = IntegerConverter.class)
     private Integer queryNumber;
 
     @Parameter(names = {"-inPath", "-i"}, description = "File from which to read data", required = true, converter = FileConverter.class, validateWith = FileExistsValidator.class)
@@ -39,11 +39,11 @@ public class Arguments implements DataSerializable {
     @Parameter(names = {"-timeOutPath", "-t"}, description = "File to which to output execution time", required = true, converter = FileConverter.class)
     private File timeFile;
 
-    @Parameter(names = {"-n"}, converter = IntegerConverter.class)  // TODO validate only specified for queryNumber 2, 6, 7
-    private Integer n = -1;
+    @Parameter(names = {"-n"}, converter = IntegerConverter.class)
+    private Integer n;
 
-    @Parameter(names = {"-prov"}, converter = IntegerConverter.class)  // TODO validate only specified for queryNumber 2
-    private Integer prov = -1;
+    @Parameter(names = {"-prov"}, converter = IntegerConverter.class)
+    private Integer prov;
 
     @Override
     public void writeData(ObjectDataOutput objectDataOutput) throws IOException {
@@ -84,6 +84,26 @@ public class Arguments implements DataSerializable {
                 .filter(Objects::nonNull)
                 .flatMap(Arrays::stream)
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * Post validation, to be performed after initial schema validation.  Among other things, validates that the -n and
+     * -prov parameters are used only when appropriate.
+     *
+     * @throws ParameterException If validation fails.
+     */
+    public void postValidate() throws ParameterException {
+        if(queryNumber < 1 || queryNumber > 7) {
+            throw new ParameterException("Query number must be between 1 and 7");
+        }
+        if(n != null) {
+            if(n != 2 && n != 6 && n != 7) {
+                throw new ParameterException("-n parameter may only be used with query numbers 2, 6, 7");
+            }
+        }
+        if(prov != null && queryNumber != 2) {
+            throw new ParameterException("-prov parameter may only be used with query number 2");
+        }
     }
 
     public List<InetAddress> getNodeIps() {
