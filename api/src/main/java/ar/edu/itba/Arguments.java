@@ -12,13 +12,15 @@ import com.hazelcast.nio.serialization.DataSerializable;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * POJO for run arguments. Serializable for parameters to be sent over the net to nodes.
  */
-public class Arguments implements DataSerializable{
+public class Arguments implements DataSerializable {
 
-    // TODO support all arguments prefixed with D?
+    private static final List<String> KNOWN_PROPERTIES = Arrays.asList("addresses", "query", "inPath", "outPath", "timeOutPath", "n", "prov");
 
     @Parameter(names = {"-addresses", "-a"}, description = "Node IP addresses", required = true, listConverter = CommaSeparator.class)  // TODO use IP class directly?
     private String[] nodeIps;
@@ -49,6 +51,25 @@ public class Arguments implements DataSerializable{
     @Override
     public void readData(ObjectDataInput objectDataInput) throws IOException {
         // TODO
+    }
+
+    /**
+     * Capture known system properties and convert them to regular program arguments, as recognized by JCommander.
+     *
+     * @param properties The properties to read.
+     * @return The present recognized properties, in regular program argument format.
+     * @see #KNOWN_PROPERTIES
+     */
+    public static List<String> fromProperties(Properties properties) {
+        return KNOWN_PROPERTIES.stream()
+                .map(propertyName -> {
+                    Optional<String> value = Optional.ofNullable(properties.getProperty(propertyName));
+                    // If present, transform "-Dkey=value" to "-key", "value". Else null
+                    return value.map(presentValue -> new String[] {"-" + propertyName, presentValue}).orElse(null);
+                })
+                .filter(Objects::nonNull)
+                .flatMap(Arrays::stream)
+                .collect(Collectors.toList());
     }
 
     public String[] getNodeIps() {
