@@ -5,6 +5,7 @@ import com.beust.jcommander.IStringConverter;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.ParameterException;
 import com.beust.jcommander.converters.FileConverter;
+import com.beust.jcommander.converters.InetAddressConverter;
 import com.beust.jcommander.converters.IntegerConverter;
 import com.hazelcast.nio.ObjectDataInput;
 import com.hazelcast.nio.ObjectDataOutput;
@@ -12,6 +13,7 @@ import com.hazelcast.nio.serialization.DataSerializable;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.InetAddress;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -23,7 +25,7 @@ public class Arguments implements DataSerializable {
     private static final List<String> KNOWN_PROPERTIES = Arrays.asList("addresses", "query", "inPath", "outPath", "timeOutPath", "n", "prov");
 
     @Parameter(names = {"-addresses", "-a"}, description = "Node IP addresses", required = true, listConverter = CommaSeparator.class)  // TODO use IP class directly?
-    private String[] nodeIps;
+    private List<InetAddress> nodeIps;
 
     @Parameter(names = {"-query", "-q"}, description = "Query number to execute", required = true, converter = IntegerConverter.class) // TODO validate min/max
     private Integer queryNumber;
@@ -72,7 +74,7 @@ public class Arguments implements DataSerializable {
                 .collect(Collectors.toList());
     }
 
-    public String[] getNodeIps() {
+    public List<InetAddress> getNodeIps() {
         return nodeIps;
     }
 
@@ -100,10 +102,12 @@ public class Arguments implements DataSerializable {
         return prov;
     }
 
-    private static class CommaSeparator implements IStringConverter<String[]> {
+    private static class CommaSeparator implements IStringConverter<List<InetAddress>> {
+        InetAddressConverter converter = new InetAddressConverter();
+
         @Override
-        public String[] convert(String value) {
-            return value.split(",");
+        public List<InetAddress> convert(String line) {
+            return Arrays.stream(line.split(",")).map(address -> converter.convert(address)).collect(Collectors.toList());
         }
     }
 
