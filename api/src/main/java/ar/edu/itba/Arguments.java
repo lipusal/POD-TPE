@@ -47,12 +47,24 @@ public class Arguments implements DataSerializable {
 
     @Override
     public void writeData(ObjectDataOutput objectDataOutput) throws IOException {
-        // TODO
+        objectDataOutput.writeObject(nodeIps);
+        objectDataOutput.writeInt(queryNumber);
+        objectDataOutput.writeObject(inFile);
+        objectDataOutput.writeObject(outFile);
+        objectDataOutput.writeObject(timeFile);
+        objectDataOutput.writeInt(n);
+        objectDataOutput.writeInt(prov);
     }
 
     @Override
     public void readData(ObjectDataInput objectDataInput) throws IOException {
-        // TODO
+        nodeIps = objectDataInput.readObject();
+        queryNumber = objectDataInput.readInt();
+        inFile = objectDataInput.readObject();
+        outFile = objectDataInput.readObject();
+        timeFile = objectDataInput.readObject();
+        n = objectDataInput.readInt();
+        prov = objectDataInput.readInt();
     }
 
     /**
