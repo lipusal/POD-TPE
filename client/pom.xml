@@ -6,7 +6,6 @@
     <groupId>ar.edu.itba</groupId>
     <version>1.0-SNAPSHOT</version>
   </parent>
-  <groupId>ar.edu.itba</groupId>
   <artifactId>pod-tp-client</artifactId>
   <version>1.0-SNAPSHOT</version>
   <name>pod-tp-client</name>
@@ -19,6 +18,11 @@
     <dependency>
       <groupId>com.hazelcast</groupId>
       <artifactId>hazelcast-all</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.beust</groupId>
+      <artifactId>jcommander</artifactId>
+      <version>1.72</version>
     </dependency>
   </dependencies>
   <build>
