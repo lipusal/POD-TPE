@@ -25,6 +25,7 @@ import java.util.concurrent.ExecutionException;
 
 public class Client {
     private static Logger logger = LoggerFactory.getLogger(Client.class);
+    private static final String PREFIX = "53384-54197-54859-55824";
 
     public static void main(String[] args) throws IOException, ExecutionException, InterruptedException {
         // 1) Add system properties (-Dx=y)
@@ -53,8 +54,8 @@ public class Client {
         timer.dataReadEnd();
 
         // Upload data to cluster
-        JobTracker tracker = hz.getJobTracker("query" + parsedArgs.getQueryNumber());
-        final IList<CensusEntry> iData = hz.getList("data");
+        JobTracker tracker = hz.getJobTracker(PREFIX + "_query" + parsedArgs.getQueryNumber());
+        final IList<CensusEntry> iData = hz.getList(PREFIX + "_data");
         iData.clear();
         iData.addAll(data);
         // TODO: Consider uploading as map, ie. adding a unique key to each census entry
