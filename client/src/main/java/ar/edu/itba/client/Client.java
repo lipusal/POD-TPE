@@ -27,12 +27,12 @@ public class Client {
     private static Logger logger = LoggerFactory.getLogger(Client.class);
 
     public static void main(String[] args) throws IOException, ExecutionException, InterruptedException {
-        // 1) Add program arguments
+        // 1) Add system properties (-Dx=y)
         List<String> allArguments = Arguments.fromProperties(System.getProperties());
+        // 2) Add program arguments
         allArguments.addAll(Arrays.asList(args));
-        // 2) Add system properties (-Dx=y)
-        Arguments parsedArgs = new Arguments();
         // 3) Parse and validate
+        Arguments parsedArgs = new Arguments();
         JCommander.newBuilder()
                 .addObject(parsedArgs)
                 .build()
