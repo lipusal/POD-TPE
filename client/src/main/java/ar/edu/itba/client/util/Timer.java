@@ -63,7 +63,7 @@ public class Timer {
     }
 
     /**
-     * Save query end time, write all saved timestamps to file, and close it.
+     * Save query end time and close timestamps file.
      *
      * @throws IllegalStateException If called at any time other than after calling {@link #queryStart()}
      * @throws IOException           On I/O error with the time file.
