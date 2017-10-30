@@ -12,6 +12,9 @@
 *.tar.gz
 *.rar
 
+### Output
+/*.txt
+
 ## IDEA stuff
 *.iws
 *.iml
