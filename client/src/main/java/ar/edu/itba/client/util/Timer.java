@@ -5,6 +5,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -17,6 +18,7 @@ public class Timer {
     private final FileWriter timeWriter;
     private Status status;
     private List<LocalDateTime> timestamps;
+    private static final List<String> labels = Arrays.asList("Data read start", "Data read end", "Query start", "Query end");
 
     public Timer(File timeFile) throws IOException {
         this.timeWriter = new FileWriter(timeFile);
@@ -89,13 +91,12 @@ public class Timer {
     /**
      * Write all saved timestamps in the time file, one per line.
      */
-    private void writeTimestamps() {
-        timestamps.forEach(timestamp -> {
-            try {
-                timeWriter.write(timestamp + "\n");
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        });
+    private void writeTimestamps() throws IOException {
+        if(timestamps.size() != labels.size()) {
+            throw new IllegalArgumentException("Not ready to write timestamps, need " + labels.size() + " but have " + timestamps.size());
+        }
+        for (int i = 0; i < labels.size(); i++) {
+            timeWriter.write(timestamps.get(i) + " - " + labels.get(i));
+        }
     }
 }
