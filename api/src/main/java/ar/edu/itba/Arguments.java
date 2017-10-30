@@ -24,7 +24,7 @@ public class Arguments implements DataSerializable {
 
     private static final List<String> KNOWN_PROPERTIES = Arrays.asList("addresses", "query", "inPath", "outPath", "timeOutPath", "n", "prov");
 
-    @Parameter(names = {"-addresses", "-a"}, description = "Node IP addresses", required = true, listConverter = CommaSeparator.class)
+    @Parameter(names = {"-addresses", "-a"}, description = "Node IP addresses", required = true, listConverter = ColonSeparator.class)
     private List<InetAddress> nodeIps;
 
     @Parameter(names = {"-query", "-q"}, description = "Query number to execute", required = true, converter = IntegerConverter.class)
@@ -137,23 +137,23 @@ public class Arguments implements DataSerializable {
     /**
      * Splits a single comma-separated string argument to various IP addresses.
      */
-    private static class CommaSeparator implements IStringConverter<List<InetAddress>> {
+    public static class ColonSeparator implements IStringConverter<List<InetAddress>> {
         InetAddressConverter converter = new InetAddressConverter();
 
         @Override
         public List<InetAddress> convert(String line) {
-            return Arrays.stream(line.split(",")).map(address -> converter.convert(address)).collect(Collectors.toList());
+            return Arrays.stream(line.split(";")).map(address -> converter.convert(address)).collect(Collectors.toList());
         }
     }
 
     /**
      * Validates that a file argument refers to a file that exists.
      */
-    private static class FileExistsValidator implements IParameterValidator {
+    public static class FileExistsValidator implements IParameterValidator {
         @Override
         public void validate(String name, String value) throws ParameterException {
             if(!new File(value).exists()) {
-                throw new ParameterException(name + "\"" + value + "\" does not exist");
+                throw new ParameterException(name + " \"" + value + "\" does not exist");
             }
         }
     }
