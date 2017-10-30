@@ -17,12 +17,9 @@ public class Timer {
 
     private final FileWriter timeWriter;
     private Status status;
-    private List<LocalDateTime> timestamps;
-    private static final List<String> labels = Arrays.asList("Data read start", "Data read end", "Query start", "Query end");
 
     public Timer(File timeFile) throws IOException {
         this.timeWriter = new FileWriter(timeFile);
-        this.timestamps = new ArrayList<>();
         this.status = Status.NOT_STARTED;
     }
 
@@ -31,11 +28,11 @@ public class Timer {
      *
      * @throws IllegalStateException If called in an invalid state.
      */
-    public void dataReadStart() throws IllegalStateException {
+    public void dataReadStart() throws IllegalStateException, IOException {
         if (status != Status.NOT_STARTED) {
             throw new IllegalStateException("dataReadStart() can only be called once, and before any other start/end methods");
         }
-        saveTimestamp();
+        timeWriter.write(LocalDateTime.now() + " - Data read start\n");
         status = Status.READING_DATA;
     }
 
@@ -44,11 +41,11 @@ public class Timer {
      *
      * @throws IllegalStateException If called at any time other than after calling {@link #dataReadStart()}.
      */
-    public void dataReadEnd() throws IllegalStateException {
+    public void dataReadEnd() throws IllegalStateException, IOException {
         if (status != Status.READING_DATA) {
             throw new IllegalStateException("dataReadEnd() can only be called once, after dataReadStart()");
         }
-        saveTimestamp();
+        timeWriter.write(LocalDateTime.now() + " - Data read end\n");
         status = Status.READ_DATA;
     }
 
@@ -57,11 +54,11 @@ public class Timer {
      *
      * @throws IllegalStateException If called at any time other than after calling {@link #dataReadEnd()}
      */
-    public void queryStart() throws IllegalStateException {
+    public void queryStart() throws IllegalStateException, IOException {
         if (status != Status.READ_DATA) {
             throw new IllegalStateException("queryStart() can only be called once, after dataReadEnd()");
         }
-        saveTimestamp();
+        timeWriter.write(LocalDateTime.now() + " - Query start\n");
         status = Status.EXECUTING_QUERY;
     }
 
@@ -75,28 +72,8 @@ public class Timer {
         if (status != Status.EXECUTING_QUERY) {
             throw new IllegalStateException("queryEnd() can only be called once, after queryStart()");
         }
-        saveTimestamp();
-        status = Status.DONE;
-        writeTimestamps();
+        timeWriter.write(LocalDateTime.now() + " - Query end\n");
         timeWriter.close();
-    }
-
-    /**
-     * Append the current timestamp to saved timestamps.
-     */
-    private void saveTimestamp() {
-        timestamps.add(LocalDateTime.now());
-    }
-
-    /**
-     * Write all saved timestamps in the time file, one per line.
-     */
-    private void writeTimestamps() throws IOException {
-        if(timestamps.size() != labels.size()) {
-            throw new IllegalArgumentException("Not ready to write timestamps, need " + labels.size() + " but have " + timestamps.size());
-        }
-        for (int i = 0; i < labels.size(); i++) {
-            timeWriter.write(timestamps.get(i) + " - " + labels.get(i));
-        }
+        status = Status.DONE;
     }
 }
