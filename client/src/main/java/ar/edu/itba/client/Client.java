@@ -33,8 +33,7 @@ public class Client {
 
         Timer timer = new Timer(new File( "time.txt"));
 
-        // Curtanse, tiene mi directorio
-        CsvParser parser = new CsvParser(new File("/Users/juanlipuma/POD-TPE/census100.csv").toPath());
+        CsvParser parser = new CsvParser(new File("census100.csv").toPath());
         timer.dataReadStart();
         parser.parse().forEach(System.out::println);
         timer.dataReadEnd();
