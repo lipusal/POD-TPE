@@ -12,6 +12,7 @@ import ar.edu.itba.q2.CensusQuery2CombinerFactory;
 import ar.edu.itba.q2.CensusQuery2Mapper;
 import ar.edu.itba.q2.CensusQuery2ReducerFactory;
 import ar.edu.itba.q4.CensusToRegionHomeIdMapper;
+import ar.edu.itba.q4.HomeCountCollator;
 import ar.edu.itba.q4.RegionToHomeCountReducer;
 import com.beust.jcommander.JCommander;
 import com.hazelcast.client.config.ClientConfig;
@@ -145,7 +146,7 @@ public class Client {
 
                 //Submit and block until done
                 timer.queryStart();
-                Map<Region, Integer> result = future.submit().get();
+                Map<Region, Integer> result = future.submit(new HomeCountCollator()).get();
                 //TODO write result to file
                 timer.queryEnd();
                 System.out.println(result);
