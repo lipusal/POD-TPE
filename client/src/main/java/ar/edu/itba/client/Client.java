@@ -11,6 +11,8 @@ import ar.edu.itba.q2.CensusQuery2Collator;
 import ar.edu.itba.q2.CensusQuery2CombinerFactory;
 import ar.edu.itba.q2.CensusQuery2Mapper;
 import ar.edu.itba.q2.CensusQuery2ReducerFactory;
+import ar.edu.itba.q4.CensusToRegionHomeIdMapper;
+import ar.edu.itba.q4.RegionToHomeCountReducer;
 import com.beust.jcommander.JCommander;
 import com.hazelcast.client.config.ClientConfig;
 import com.hazelcast.core.HazelcastInstance;
@@ -80,7 +82,7 @@ public class Client {
 
         Integer queryNUmber = parsedArgs.getQueryNumber();
 
-        switch (queryNUmber){
+        switch (queryNUmber) {
             case 1:
 
                 //What we've done
@@ -102,7 +104,7 @@ public class Client {
                 //Added by me
                 logger.info("Running map/reduce");
                 timer.queryStart();
-               JobCompletableFuture<Map<Region, Integer>> future1 = job.mapper(new CensusQuery1Mapper()).reducer(new CensusQuery1ReducerFactory()).submit();
+                JobCompletableFuture<Map<Region, Integer>> future1 = job.mapper(new CensusQuery1Mapper()).reducer(new CensusQuery1ReducerFactory()).submit();
 
                 Map<Region, Integer> ans1 = future1.get();
                 timer.queryEnd();
@@ -137,11 +139,17 @@ public class Client {
                 System.out.println("Done");
                 break;
             case 4:
-                logger.info("Running map/reduce");
-                timer.queryStart();
+                ReducingSubmittableJob<String, Region, Integer> future = job
+                        .mapper(new CensusToRegionHomeIdMapper())
+                        .reducer(new RegionToHomeCountReducer());
 
-                //QUERY4
+                //Submit and block until done
+                timer.queryStart();
+                Map<Region, Integer> result = future.submit().get();
+                //TODO write result to file
                 timer.queryEnd();
+                System.out.println(result);
+
                 logger.info("End of map/reduce");
                 System.out.println("Done");
                 break;
