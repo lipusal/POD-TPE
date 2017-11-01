@@ -1,24 +1,50 @@
 package ar.edu.itba;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Created by root on 10/31/17.
  */
 public enum Region {
     BUENOS_AIRES, CENTRO, NUEVO_CUYO, NORTE_GRANDE_ARGENTINO, PATAGONICA;
 
+    private static final Map<String,Region> regionsMap = new HashMap<>();
+
+    static {
+        regionsMap.put("Buenos Aires", Region.BUENOS_AIRES);
+        regionsMap.put("Ciudad Autónoma de Buenos Aires", Region.BUENOS_AIRES);
+        regionsMap.put("Entre Ríos", Region.CENTRO);
+        regionsMap.put("Santa Fe", Region.CENTRO);
+        regionsMap.put("Córdoba", Region.CENTRO);
+        regionsMap.put("La Rioja", Region.NUEVO_CUYO);
+        regionsMap.put("San Juan", Region.NUEVO_CUYO);
+        regionsMap.put("Mendoza", Region.NUEVO_CUYO);
+        regionsMap.put("San Luis", Region.NUEVO_CUYO);
+        regionsMap.put("Catamarca", Region.NORTE_GRANDE_ARGENTINO);
+        regionsMap.put("Santiago del Estero", Region.NORTE_GRANDE_ARGENTINO);
+        regionsMap.put("Tucumán", Region.NORTE_GRANDE_ARGENTINO);
+        regionsMap.put("Salta", Region.NORTE_GRANDE_ARGENTINO);
+        regionsMap.put("Jujuy", Region.NORTE_GRANDE_ARGENTINO);
+        regionsMap.put("Chaco", Region.NORTE_GRANDE_ARGENTINO);
+        regionsMap.put("Formosa", Region.NORTE_GRANDE_ARGENTINO);
+        regionsMap.put("Corrientes", Region.NORTE_GRANDE_ARGENTINO);
+        regionsMap.put("Misiones", Region.NORTE_GRANDE_ARGENTINO);
+        regionsMap.put("La Pampa",Region.PATAGONICA);
+        regionsMap.put("Neuquén",Region.PATAGONICA);
+        regionsMap.put("Río negro",Region.PATAGONICA);
+        regionsMap.put("Chubut",Region.PATAGONICA);
+        regionsMap.put("Santa Cruz",Region.PATAGONICA);
+        regionsMap.put("Tierra del Fuego",Region.PATAGONICA);
+
+    }
     public static Region fromString(String province){
-        if(province.equals("Buenos Aires")){
-            return BUENOS_AIRES;
-        }else if (province.equals("Entre Ríos") || province.equals("Santa Fe") || province.equals("Córdoba")){
-            return CENTRO;
-        }else if(province.equals("La Rioja") || province.equals("San Juan") || province.equals("Mendoza") || province.equals("San Luis")){
-            return NUEVO_CUYO;
-        }else if(province.equals("Catamarca") || province.equals("Santiago del Estero") || province.equals("Tucumán") || province.equals("Salta") || province.equals("Jujuy") || province.equals("Chaco") || province.equals("Formosa") || province.equals("Corrientes") || province.equals("Misiones")){
-            return NORTE_GRANDE_ARGENTINO;
-        }else if(province.equals("La Pampa") || province.equals("Neuquén") || province.equals("Río Negro") || province.equals("Chubut") || province.equals("Santa Cruz") || province.equals("Tierra del Fuego")){
-            return PATAGONICA;
-        }else{
+
+        if(!regionsMap.containsKey(province)){
             throw new IllegalArgumentException("Unknown String value " + province);
         }
+
+        return regionsMap.get(province);
+
     }
 }
