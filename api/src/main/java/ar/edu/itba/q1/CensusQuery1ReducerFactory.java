@@ -1,14 +1,15 @@
 package ar.edu.itba.q1;
 
+import ar.edu.itba.Region;
 import com.hazelcast.mapreduce.Reducer;
 import com.hazelcast.mapreduce.ReducerFactory;
 
 /**
  * Created by root on 10/31/17.
  */
-public class CensusQuery1ReducerFactory implements ReducerFactory<String, Integer, Integer>{
+public class CensusQuery1ReducerFactory implements ReducerFactory<Region, Integer, Integer>{
     @Override
-    public Reducer<Integer, Integer> newReducer(String region) {
+    public Reducer<Integer, Integer> newReducer(Region region) {
         return new CensusQuery1Reducer();
     }
 

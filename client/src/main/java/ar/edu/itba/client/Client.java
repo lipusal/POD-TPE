@@ -98,9 +98,9 @@ public class Client {
                 //Added by me
                 logger.info("Running map/reduce");
                 timer.queryStart();
-               JobCompletableFuture<Map<String, Integer>> future1 = job.mapper(new CensusQuery1Mapper()).reducer(new CensusQuery1ReducerFactory()).submit();
+               JobCompletableFuture<Map<Region, Integer>> future1 = job.mapper(new CensusQuery1Mapper()).reducer(new CensusQuery1ReducerFactory()).submit();
 
-                Map<String, Integer> ans1 = future1.get();
+                Map<Region, Integer> ans1 = future1.get();
                 timer.queryEnd();
                 logger.info("End of map/reduce");
                 System.out.println("Done");
