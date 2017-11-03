@@ -17,6 +17,7 @@ import ar.edu.itba.q4.RegionToHomeCountReducer;
 import com.beust.jcommander.JCommander;
 import com.hazelcast.client.config.ClientConfig;
 import com.hazelcast.client.config.ClientNetworkConfig;
+import com.hazelcast.config.GroupConfig;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IList;
 import com.hazelcast.mapreduce.*;
@@ -32,7 +33,6 @@ import java.util.concurrent.ExecutionException;
 
 public class Client {
     private static Logger logger = LoggerFactory.getLogger(Client.class);
-    private static final String PREFIX = "53384-54197-54859-55824";
 
     public static void main(String[] args) throws IOException, ExecutionException, InterruptedException {
         // 1) Add system properties (-Dx=y)
@@ -50,13 +50,16 @@ public class Client {
 //        System.out.println("Query number: " + parsedArgs.getQueryNumber());
 
         logger.info("Client starting ...");
+
         // Configure client
         final ClientConfig ccfg = new ClientConfig()
-                .setNetworkConfig(new ClientNetworkConfig()
-                        // TODO: Consider storing IPs directly as Strings
-                        .setAddresses(parsedArgs.getNodeIpsAsStrings()
-                        )
-                );
+            .setGroupConfig(new GroupConfig()
+                .setName(Arguments.GROUP_NAME)
+                .setPassword(Arguments.GROUP_NAME)
+            )
+            .setNetworkConfig(new ClientNetworkConfig()
+                .addAddress(parsedArgs.getNodeIps().toArray(new String[0]))
+            );
         // Start client with specified configuration
         final HazelcastInstance hz = com.hazelcast.client.HazelcastClient.newHazelcastClient(ccfg);
 
@@ -73,8 +76,8 @@ public class Client {
 
         // Upload data to cluster
         System.out.println("Getting tracker");
-        JobTracker tracker = hz.getJobTracker(PREFIX + "_query" + parsedArgs.getQueryNumber());
-        final IList<CensusEntry> iData = hz.getList(PREFIX + "_data");
+        JobTracker tracker = hz.getJobTracker(Arguments.GROUP_NAME + "_query" + parsedArgs.getQueryNumber());
+        final IList<CensusEntry> iData = hz.getList(Arguments.GROUP_NAME + "_data");
         iData.clear();
         iData.addAll(data);
 
@@ -127,7 +130,7 @@ public class Client {
                 //QUERY2
                 JobCompletableFuture<List<Map.Entry<String, Integer>>> future2 = job.mapper(new CensusQuery2Mapper(prov)).combiner(new CensusQuery2CombinerFactory()).reducer(new CensusQuery2ReducerFactory()).submit(new CensusQuery2Collator(limit));
 
-                List<Map.Entry<String , Integer>> ans2 = future2.get();
+                List<Map.Entry<String, Integer>> ans2 = future2.get();
 
                 timer.queryEnd();
                 logger.info("End of map/reduce");

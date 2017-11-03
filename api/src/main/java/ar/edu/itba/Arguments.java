@@ -22,10 +22,13 @@ import java.util.stream.Collectors;
  */
 public class Arguments implements DataSerializable {
 
+    // Run group
+    public static final String GROUP_NAME = "53384-54197-54859-55824";
+
     private static final List<String> KNOWN_PROPERTIES = Arrays.asList("addresses", "query", "inPath", "outPath", "timeOutPath", "n", "prov");
 
     @Parameter(names = {"-addresses", "-a"}, description = "Node IP addresses", required = true, listConverter = ColonSeparator.class)
-    private List<InetAddress> nodeIps;
+    private List<String> nodeIps;
 
     @Parameter(names = {"-query", "-q"}, description = "Query number to execute", required = true, converter = IntegerConverter.class)
     private Integer queryNumber;
@@ -106,12 +109,8 @@ public class Arguments implements DataSerializable {
         }
     }
 
-    public List<InetAddress> getNodeIps() {
+    public List<String> getNodeIps() {
         return nodeIps;
-    }
-
-    public List<String> getNodeIpsAsStrings() {
-        return nodeIps.stream().map(InetAddress::toString).collect(Collectors.toList());
     }
 
     public Integer getQueryNumber() {
@@ -141,12 +140,12 @@ public class Arguments implements DataSerializable {
     /**
      * Splits a single comma-separated string argument to various IP addresses.
      */
-    public static class ColonSeparator implements IStringConverter<List<InetAddress>> {
+    public static class ColonSeparator implements IStringConverter<List<String>> {
         InetAddressConverter converter = new InetAddressConverter();
 
         @Override
-        public List<InetAddress> convert(String line) {
-            return Arrays.stream(line.split(";")).map(address -> converter.convert(address)).collect(Collectors.toList());
+        public List<String> convert(String line) {
+            return Arrays.stream(line.split(";"))/*.map(address -> converter.convert(address))*/.collect(Collectors.toList());
         }
     }
 
