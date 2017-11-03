@@ -110,6 +110,10 @@ public class Arguments implements DataSerializable {
         return nodeIps;
     }
 
+    public List<String> getNodeIpsAsStrings() {
+        return nodeIps.stream().map(InetAddress::toString).collect(Collectors.toList());
+    }
+
     public Integer getQueryNumber() {
         return queryNumber;
     }

@@ -16,6 +16,7 @@ import ar.edu.itba.q4.HomeCountCollator;
 import ar.edu.itba.q4.RegionToHomeCountReducer;
 import com.beust.jcommander.JCommander;
 import com.hazelcast.client.config.ClientConfig;
+import com.hazelcast.client.config.ClientNetworkConfig;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IList;
 import com.hazelcast.mapreduce.*;
@@ -49,8 +50,14 @@ public class Client {
 //        System.out.println("Query number: " + parsedArgs.getQueryNumber());
 
         logger.info("Client starting ...");
-        final ClientConfig ccfg = new ClientConfig();
-        // TODO use configuration from arguments
+        // Configure client
+        final ClientConfig ccfg = new ClientConfig()
+                .setNetworkConfig(new ClientNetworkConfig()
+                        // TODO: Consider storing IPs directly as Strings
+                        .setAddresses(parsedArgs.getNodeIpsAsStrings()
+                        )
+                );
+        // Start client with specified configuration
         final HazelcastInstance hz = com.hazelcast.client.HazelcastClient.newHazelcastClient(ccfg);
 
         Timer timer = new Timer(new File("time.txt"));
