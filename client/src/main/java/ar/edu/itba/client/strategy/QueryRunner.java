@@ -26,4 +26,9 @@ public interface QueryRunner {
      * @throws IOException On I/O errors.
      */
     void writeResult() throws IOException;
+
+    /**
+     * Print the result in a nice format to STDOUT. Optional method, default does nothing.
+     */
+    default void printResult() {}
 }
