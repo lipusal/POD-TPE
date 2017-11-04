@@ -1,23 +1,21 @@
 package ar.edu.itba.q3;
 
 
+import ar.edu.itba.LongTuple;
 import ar.edu.itba.Region;
-import ar.edu.itba.Status;
 import com.hazelcast.mapreduce.Reducer;
 import com.hazelcast.mapreduce.ReducerFactory;
 
-import java.awt.*;
-
-public class CensusQuery3ReducerFactory implements ReducerFactory<Region,Point,Double> {
+public class CensusQuery3ReducerFactory implements ReducerFactory<Region,LongTuple,Double> {
 
 
     @Override
-    public Reducer<Point, Double> newReducer(Region region) {
+    public Reducer<LongTuple, Double> newReducer(Region region) {
         return new CensusQuery3Reducer();
     }
 
 
-    private class CensusQuery3Reducer extends Reducer<Point, Double> {
+    private class CensusQuery3Reducer extends Reducer<LongTuple, Double> {
         private volatile double numerator;
         private volatile double denominator;
 
@@ -29,9 +27,9 @@ public class CensusQuery3ReducerFactory implements ReducerFactory<Region,Point,D
         }
 
         @Override
-        public void reduce(Point value) {
-            numerator += value.x;
-            denominator += value.y;
+        public void reduce(LongTuple tuple) {
+            numerator += tuple.getKey();
+            denominator += tuple.getValue();
         }
 
         @Override
