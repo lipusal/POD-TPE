@@ -5,16 +5,20 @@ import ar.edu.itba.CensusEntry;
 import ar.edu.itba.Region;
 import ar.edu.itba.client.util.CsvParser;
 import ar.edu.itba.client.util.Timer;
-import ar.edu.itba.example.IdentityMapper;
-import ar.edu.itba.example.IdentityReducerFactory;
 import ar.edu.itba.q1.CensusQuery1Mapper;
 import ar.edu.itba.q1.CensusQuery1ReducerFactory;
+import ar.edu.itba.q2.CensusQuery2Collator;
+import ar.edu.itba.q2.CensusQuery2CombinerFactory;
+import ar.edu.itba.q2.CensusQuery2Mapper;
+import ar.edu.itba.q2.CensusQuery2ReducerFactory;
 import com.beust.jcommander.JCommander;
 import com.hazelcast.client.config.ClientConfig;
 import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.core.ICompletableFuture;
 import com.hazelcast.core.IList;
-import com.hazelcast.mapreduce.*;
+import com.hazelcast.mapreduce.Job;
+import com.hazelcast.mapreduce.JobCompletableFuture;
+import com.hazelcast.mapreduce.JobTracker;
+import com.hazelcast.mapreduce.KeyValueSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -107,13 +111,21 @@ public class Client {
                 System.out.println(ans1.toString());
                 break;
             case 2:
+                //TODO: add query params to the configuration
+                String prov = "Buenos Aires";
+                int limit = 10;
                 logger.info("Running map/reduce");
                 timer.queryStart();
 
                 //QUERY2
+                JobCompletableFuture<List<Map.Entry<String, Integer>>> future2 = job.mapper(new CensusQuery2Mapper(prov)).combiner(new CensusQuery2CombinerFactory()).reducer(new CensusQuery2ReducerFactory()).submit(new CensusQuery2Collator(limit));
+
+                List<Map.Entry<String , Integer>> ans2 = future2.get();
+
                 timer.queryEnd();
                 logger.info("End of map/reduce");
                 System.out.println("Done");
+                System.out.println(ans2.toString());
                 break;
             case 3:
                 logger.info("Running map/reduce");
