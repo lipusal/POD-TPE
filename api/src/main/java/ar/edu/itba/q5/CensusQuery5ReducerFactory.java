@@ -24,7 +24,6 @@ public class CensusQuery5ReducerFactory implements ReducerFactory<Region, Long, 
             @Override
             public Double finalizeReduce() {
                 return homeIdsCounter.values().stream().collect(Collectors.averagingDouble(o -> o));
-
             }
         };
     }
