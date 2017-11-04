@@ -5,9 +5,6 @@ import ar.edu.itba.Region;
 import com.hazelcast.mapreduce.Context;
 import com.hazelcast.mapreduce.Mapper;
 
-/**
- * Created by lelv on 11/4/17.
- */
 public class CensusQuery6Mapper implements Mapper<String, CensusEntry, String, Integer>{
 
     @Override

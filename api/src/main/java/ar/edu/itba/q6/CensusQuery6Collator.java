@@ -7,9 +7,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-/**
- * Created by lelv on 11/4/17.
- */
 public class CensusQuery6Collator implements Collator<Map.Entry<String, Integer>, Map<String, Integer>> {
     int limit;
 
