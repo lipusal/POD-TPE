@@ -14,6 +14,10 @@ import ar.edu.itba.q2.CensusQuery2ReducerFactory;
 import ar.edu.itba.q4.CensusToRegionHomeIdMapper;
 import ar.edu.itba.q4.HomeCountCollator;
 import ar.edu.itba.q4.RegionToHomeCountReducer;
+import ar.edu.itba.q6.CensusQuery6Collator;
+import ar.edu.itba.q6.CensusQuery6CombinerFactory;
+import ar.edu.itba.q6.CensusQuery6Mapper;
+import ar.edu.itba.q6.CensusQuery6ReducerFactory;
 import com.beust.jcommander.JCommander;
 import com.hazelcast.client.config.ClientConfig;
 import com.hazelcast.core.HazelcastInstance;
@@ -161,13 +165,19 @@ public class Client {
                 System.out.println("Done");
                 break;
             case 6:
+                int minLimit = 5;
                 logger.info("Running map/reduce");
                 timer.queryStart();
 
                 //QUERY6
+                JobCompletableFuture<Map<String, Integer>> future6 = job.mapper(new CensusQuery6Mapper()).combiner(new CensusQuery6CombinerFactory()).reducer(new CensusQuery6ReducerFactory()).submit(new CensusQuery6Collator(minLimit)); //job.mapper(new CensusQuery6Mapper(prov)).combiner(new CensusQuery2CombinerFactory()).reducer(new CensusQuery2ReducerFactory()).submit(new CensusQuery2Collator(limit));
+
+                Map<String, Integer> ans6 = future6.get();
+
                 timer.queryEnd();
                 logger.info("End of map/reduce");
                 System.out.println("Done");
+                System.out.println(ans6.toString());
                 break;
         }
 
