@@ -4,7 +4,32 @@ import java.util.HashMap;
 import java.util.Map;
 
 public enum Region {
-    BUENOS_AIRES, CENTRO, NUEVO_CUYO, NORTE_GRANDE_ARGENTINO, PATAGONICA;
+    BUENOS_AIRES{
+        @Override
+        public String toString() {
+            return "Región Buenos Aires";
+        }
+    }, CENTRO{
+        @Override
+        public String toString() {
+            return "Región Centro";
+        }
+    }, NUEVO_CUYO{
+        @Override
+        public String toString() {
+            return "Región del Nuevo Cuyo";
+        }
+    }, NORTE_GRANDE_ARGENTINO{
+        @Override
+        public String toString() {
+            return "Región del Norte Grande Argentino";
+        }
+    }, PATAGONICA{
+        @Override
+        public String toString() {
+            return "Región Patagónica";
+        }
+    };
 
     private static final Map<String,Region> regionsMap = new HashMap<>();
 
@@ -44,4 +69,5 @@ public enum Region {
         return regionsMap.get(province);
 
     }
+
 }
