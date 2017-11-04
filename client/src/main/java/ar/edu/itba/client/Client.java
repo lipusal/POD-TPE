@@ -12,6 +12,10 @@ import ar.edu.itba.q2.CensusQuery2Collator;
 import ar.edu.itba.q2.CensusQuery2CombinerFactory;
 import ar.edu.itba.q2.CensusQuery2Mapper;
 import ar.edu.itba.q2.CensusQuery2ReducerFactory;
+import ar.edu.itba.q3.CensusQuery3Collator;
+import ar.edu.itba.q3.CensusQuery3CombinerFactory;
+import ar.edu.itba.q3.CensusQuery3Mapper;
+import ar.edu.itba.q3.CensusQuery3ReducerFactory;
 import ar.edu.itba.q4.CensusToRegionHomeIdMapper;
 import ar.edu.itba.q4.HomeCountCollator;
 import ar.edu.itba.q4.RegionToHomeCountReducer;
@@ -143,9 +147,16 @@ public class Client {
                 timer.queryStart();
 
                 //QUERY3
+                JobCompletableFuture<Map<Region, Double>> future3 = job.mapper(new CensusQuery3Mapper()).combiner(new CensusQuery3CombinerFactory()).reducer(new CensusQuery3ReducerFactory()).submit(new CensusQuery3Collator());
+
+                Map<Region, Double> ans3 = future3.get();
+
                 timer.queryEnd();
                 logger.info("End of map/reduce");
                 System.out.println("Done");
+                for (Map.Entry<Region, Double> entry : ans3.entrySet()) {
+                    System.out.printf(entry.getKey() + ",%.2f\n",entry.getValue());
+                }
                 break;
             case 4:
                 ReducingSubmittableJob<String, Region, Integer> future = job
@@ -164,13 +175,13 @@ public class Client {
                 break;
             case 5:
                 logger.info("Running map/reduce");
-                ReducingSubmittableJob<String, Region, Double> future3 = job
+                ReducingSubmittableJob<String, Region, Double> future5 = job
                         .mapper(new CensusQuery5Mapper())
                         .reducer(new CensusQuery5ReducerFactory());
 
                 //Submit and block until done
                 timer.queryStart();
-                Map<Region, Double> result3 = future3.submit(new CensusQuery5Collator()).get();
+                Map<Region, Double> result3 = future5.submit(new CensusQuery5Collator()).get();
 
                 //QUERY5
                 timer.queryEnd();

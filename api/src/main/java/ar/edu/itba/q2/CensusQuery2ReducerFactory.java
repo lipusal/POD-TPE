@@ -10,7 +10,7 @@ public class CensusQuery2ReducerFactory implements ReducerFactory<String,Integer
     }
 
     private class CensusQuery2Reducer extends Reducer<Integer,Integer> {
-        private volatile int count;
+        private int count;
 
         //Is it neccesary to use beginReduce method?
         @Override
