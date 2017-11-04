@@ -1,6 +1,7 @@
 package ar.edu.itba.server;
 
 import ar.edu.itba.args.Util;
+import ar.edu.itba.server.util.ServerArguments;
 import com.beust.jcommander.JCommander;
 import com.hazelcast.config.*;
 import com.hazelcast.core.Hazelcast;

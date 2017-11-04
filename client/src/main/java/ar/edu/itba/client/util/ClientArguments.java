@@ -1,4 +1,4 @@
-package ar.edu.itba;
+package ar.edu.itba.client.util;
 
 import ar.edu.itba.args.ColonSeparator;
 import ar.edu.itba.args.FileExistsValidator;
@@ -6,24 +6,20 @@ import com.beust.jcommander.Parameter;
 import com.beust.jcommander.ParameterException;
 import com.beust.jcommander.converters.FileConverter;
 import com.beust.jcommander.converters.IntegerConverter;
-import com.hazelcast.nio.ObjectDataInput;
-import com.hazelcast.nio.ObjectDataOutput;
-import com.hazelcast.nio.serialization.DataSerializable;
 
 import java.io.File;
-import java.io.IOException;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * POJO for run arguments. Serializable for parameters to be sent over the net to nodes.
  */
-public class Arguments implements DataSerializable {
+public class ClientArguments {
 
-    // Run group
+    // Credentials
     public static final String GROUP_NAME = "53384-54197-54859-55824";
 
-    private static final List<String> KNOWN_PROPERTIES = Arrays.asList("addresses", "query", "inPath", "outPath", "timeOutPath", "n", "prov");
+    public static final List<String> KNOWN_PROPERTIES = Arrays.asList("addresses", "query", "inPath", "outPath", "timeOutPath", "n", "prov");
 
     @Parameter(names = {"-addresses", "-a"}, description = "Node IP addresses", required = true, listConverter = ColonSeparator.class)
     private List<String> nodeIps;
@@ -45,47 +41,6 @@ public class Arguments implements DataSerializable {
 
     @Parameter(names = {"-prov"}, converter = IntegerConverter.class)
     private Integer prov;
-
-    @Override
-    public void writeData(ObjectDataOutput objectDataOutput) throws IOException {
-        objectDataOutput.writeObject(nodeIps);
-        objectDataOutput.writeInt(queryNumber);
-        objectDataOutput.writeObject(inFile);
-        objectDataOutput.writeObject(outFile);
-        objectDataOutput.writeObject(timeFile);
-        objectDataOutput.writeInt(n);
-        objectDataOutput.writeInt(prov);
-    }
-
-    @Override
-    public void readData(ObjectDataInput objectDataInput) throws IOException {
-        nodeIps = objectDataInput.readObject();
-        queryNumber = objectDataInput.readInt();
-        inFile = objectDataInput.readObject();
-        outFile = objectDataInput.readObject();
-        timeFile = objectDataInput.readObject();
-        n = objectDataInput.readInt();
-        prov = objectDataInput.readInt();
-    }
-
-    /**
-     * Capture known system properties and convert them to regular program arguments, as recognized by JCommander.
-     *
-     * @param properties The properties to read.
-     * @return The present recognized properties, in regular program argument format.
-     * @see #KNOWN_PROPERTIES
-     */
-    public static List<String> fromProperties(Properties properties) {
-        return KNOWN_PROPERTIES.stream()
-                .map(propertyName -> {
-                    Optional<String> value = Optional.ofNullable(properties.getProperty(propertyName));
-                    // If present, transform "-Dkey=value" to "-key", "value". Else null
-                    return value.map(presentValue -> new String[]{"-" + propertyName, presentValue}).orElse(null);
-                })
-                .filter(Objects::nonNull)
-                .flatMap(Arrays::stream)
-                .collect(Collectors.toList());
-    }
 
     /**
      * Post validation, to be performed after initial schema validation.  Among other things, validates that the -n and
