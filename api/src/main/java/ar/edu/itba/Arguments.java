@@ -1,8 +1,7 @@
 package ar.edu.itba;
 
-import com.beust.jcommander.converters.InetAddressConverter;
-import com.beust.jcommander.IParameterValidator;
-import com.beust.jcommander.IStringConverter;
+import ar.edu.itba.args.ColonSeparator;
+import ar.edu.itba.args.FileExistsValidator;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.ParameterException;
 import com.beust.jcommander.converters.FileConverter;
@@ -13,7 +12,6 @@ import com.hazelcast.nio.serialization.DataSerializable;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.InetAddress;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -82,7 +80,7 @@ public class Arguments implements DataSerializable {
                 .map(propertyName -> {
                     Optional<String> value = Optional.ofNullable(properties.getProperty(propertyName));
                     // If present, transform "-Dkey=value" to "-key", "value". Else null
-                    return value.map(presentValue -> new String[] {"-" + propertyName, presentValue}).orElse(null);
+                    return value.map(presentValue -> new String[]{"-" + propertyName, presentValue}).orElse(null);
                 })
                 .filter(Objects::nonNull)
                 .flatMap(Arrays::stream)
@@ -96,15 +94,15 @@ public class Arguments implements DataSerializable {
      * @throws ParameterException If validation fails.
      */
     public void postValidate() throws ParameterException {
-        if(queryNumber < 1 || queryNumber > 7) {
+        if (queryNumber < 1 || queryNumber > 7) {
             throw new ParameterException("Query number must be between 1 and 7");
         }
-        if(n != null) {
-            if(queryNumber != 2 && queryNumber != 6 && queryNumber != 7) {
+        if (n != null) {
+            if (queryNumber != 2 && queryNumber != 6 && queryNumber != 7) {
                 throw new ParameterException("-n parameter may only be used with query numbers 2, 6, 7");
             }
         }
-        if(prov != null && queryNumber != 2) {
+        if (prov != null && queryNumber != 2) {
             throw new ParameterException("-prov parameter may only be used with query number 2");
         }
     }
@@ -135,29 +133,5 @@ public class Arguments implements DataSerializable {
 
     public Integer getProv() {
         return prov;
-    }
-
-    /**
-     * Splits a single comma-separated string argument to various IP addresses.
-     */
-    public static class ColonSeparator implements IStringConverter<List<String>> {
-        InetAddressConverter converter = new InetAddressConverter();
-
-        @Override
-        public List<String> convert(String line) {
-            return Arrays.stream(line.split(";"))/*.map(address -> converter.convert(address))*/.collect(Collectors.toList());
-        }
-    }
-
-    /**
-     * Validates that a file argument refers to a file that exists.
-     */
-    public static class FileExistsValidator implements IParameterValidator {
-        @Override
-        public void validate(String name, String value) throws ParameterException {
-            if(!new File(value).exists()) {
-                throw new ParameterException(name + " \"" + value + "\" does not exist");
-            }
-        }
     }
 }
