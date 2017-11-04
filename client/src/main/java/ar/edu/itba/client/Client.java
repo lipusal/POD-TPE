@@ -170,7 +170,7 @@ public class Client {
                 timer.queryStart();
 
                 //QUERY6
-                JobCompletableFuture<Map<String, Integer>> future6 = job.mapper(new CensusQuery6Mapper()).combiner(new CensusQuery6CombinerFactory()).reducer(new CensusQuery6ReducerFactory()).submit(new CensusQuery6Collator(minLimit)); //job.mapper(new CensusQuery6Mapper(prov)).combiner(new CensusQuery2CombinerFactory()).reducer(new CensusQuery2ReducerFactory()).submit(new CensusQuery2Collator(limit));
+                JobCompletableFuture<Map<String, Integer>> future6 = job.mapper(new CensusQuery6Mapper()).combiner(new CensusQuery6CombinerFactory()).reducer(new CensusQuery6ReducerFactory()).submit(new CensusQuery6Collator(minLimit));
 
                 Map<String, Integer> ans6 = future6.get();
 
