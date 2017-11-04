@@ -4,9 +4,6 @@ import com.hazelcast.mapreduce.Collator;
 
 import java.util.*;
 
-/**
- * Created by root on 11/4/17.
- */
 public class CensusQuery2Collator implements Collator<Map.Entry<String,Integer>,List<Map.Entry<String,Integer>>>{
 
     int limit;

@@ -3,9 +3,6 @@ package ar.edu.itba.q2;
 import com.hazelcast.mapreduce.Reducer;
 import com.hazelcast.mapreduce.ReducerFactory;
 
-/**
- * Created by root on 11/4/17.
- */
 public class CensusQuery2ReducerFactory implements ReducerFactory<String,Integer,Integer> {
     @Override
     public Reducer<Integer, Integer> newReducer(String s) {

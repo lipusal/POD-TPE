@@ -3,9 +3,6 @@ package ar.edu.itba;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Created by root on 10/31/17.
- */
 public enum Region {
     BUENOS_AIRES, CENTRO, NUEVO_CUYO, NORTE_GRANDE_ARGENTINO, PATAGONICA;
 

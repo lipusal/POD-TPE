@@ -3,9 +3,6 @@ package ar.edu.itba.q2;
 import com.hazelcast.mapreduce.Combiner;
 import com.hazelcast.mapreduce.CombinerFactory;
 
-/**
- * Created by root on 11/4/17.
- */
 public class CensusQuery2CombinerFactory implements CombinerFactory<String, Integer, Integer>{
 
     @Override
