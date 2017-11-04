@@ -28,19 +28,6 @@ public class Q1Runner extends BaseQueryRunner {
     }
 
     @Override
-    public void readData() {
-        CsvParser parser = new CsvParser(arguments.getInFile().toPath());
-        data = parser.parse();
-    }
-
-    @Override
-    public void uploadData() {
-        iData = client.getList(getCollectionName());
-        iData.clear();
-        iData.addAll(data);
-    }
-
-    @Override
     public void runQuery() throws ExecutionException, InterruptedException {
         KeyValueSource<String, CensusEntry> keyValueSource = KeyValueSource.fromList(iData);
         Job<String, CensusEntry> job = getJobTracker().newJob(keyValueSource);
