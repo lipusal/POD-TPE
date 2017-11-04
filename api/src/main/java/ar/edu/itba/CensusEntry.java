@@ -10,6 +10,7 @@ public class CensusEntry implements DataSerializable {
     private long homeId;
     private String department;
     private String province;
+    private Region region;
     
     public CensusEntry() {}
 
@@ -18,6 +19,7 @@ public class CensusEntry implements DataSerializable {
         this.homeId = homeId;
         this.department = department;
         this.province = province;
+        this.region = Region.fromString(province);
     }
 
     public Status getStatus() {
@@ -36,12 +38,15 @@ public class CensusEntry implements DataSerializable {
         return province;
     }
 
+    public Region getRegion(){ return region; }
+
     @Override
     public void writeData(ObjectDataOutput objectDataOutput) throws IOException {
         objectDataOutput.writeObject(status);
         objectDataOutput.writeLong(homeId);
         objectDataOutput.writeUTF(department);
         objectDataOutput.writeUTF(province);
+        objectDataOutput.writeObject(region);
     }
 
     @Override
@@ -50,6 +55,7 @@ public class CensusEntry implements DataSerializable {
         this.homeId = objectDataInput.readLong();
         this.department = objectDataInput.readUTF();
         this.province = objectDataInput.readUTF();
+        this.region = objectDataInput.readObject();
     }
 
     @Override
