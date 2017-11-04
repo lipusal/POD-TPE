@@ -15,6 +15,9 @@ import ar.edu.itba.q2.CensusQuery2ReducerFactory;
 import ar.edu.itba.q4.CensusToRegionHomeIdMapper;
 import ar.edu.itba.q4.HomeCountCollator;
 import ar.edu.itba.q4.RegionToHomeCountReducer;
+import ar.edu.itba.q5.CensusQuery5Collator;
+import ar.edu.itba.q5.CensusQuery5Mapper;
+import ar.edu.itba.q5.CensusQuery5ReducerFactory;
 import ar.edu.itba.q6.CensusQuery6Collator;
 import ar.edu.itba.q6.CensusQuery6CombinerFactory;
 import ar.edu.itba.q6.CensusQuery6Mapper;
@@ -32,6 +35,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
@@ -160,10 +164,20 @@ public class Client {
                 break;
             case 5:
                 logger.info("Running map/reduce");
+                ReducingSubmittableJob<String, Region, Double> future3 = job
+                        .mapper(new CensusQuery5Mapper())
+                        .reducer(new CensusQuery5ReducerFactory());
+
+                //Submit and block until done
                 timer.queryStart();
+                Map<Region, Double> result3 = future3.submit(new CensusQuery5Collator()).get();
 
                 //QUERY5
                 timer.queryEnd();
+                for(Map.Entry<Region, Double> entry : result3.entrySet()){
+                    System.out.printf(Locale.US, "%s,%.2f\n",entry.getKey().toString(),entry.getValue());
+                }
+
                 logger.info("End of map/reduce");
                 System.out.println("Done");
                 break;
