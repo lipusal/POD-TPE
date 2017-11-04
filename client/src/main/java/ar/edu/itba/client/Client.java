@@ -1,8 +1,9 @@
 package ar.edu.itba.client;
 
-import ar.edu.itba.Arguments;
 import ar.edu.itba.CensusEntry;
 import ar.edu.itba.Region;
+import ar.edu.itba.args.Util;
+import ar.edu.itba.client.util.ClientArguments;
 import ar.edu.itba.client.util.CsvParser;
 import ar.edu.itba.client.util.Timer;
 import ar.edu.itba.q1.CensusQuery1Mapper;
@@ -20,6 +21,8 @@ import ar.edu.itba.q6.CensusQuery6Mapper;
 import ar.edu.itba.q6.CensusQuery6ReducerFactory;
 import com.beust.jcommander.JCommander;
 import com.hazelcast.client.config.ClientConfig;
+import com.hazelcast.client.config.ClientNetworkConfig;
+import com.hazelcast.config.GroupConfig;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IList;
 import com.hazelcast.mapreduce.*;
@@ -28,40 +31,40 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 public class Client {
     private static Logger logger = LoggerFactory.getLogger(Client.class);
-    private static final String PREFIX = "53384-54197-54859-55824";
 
-    public static void main(String[] args) throws IOException, ExecutionException, InterruptedException {
-        // 1) Add system properties (-Dx=y)
-        List<String> allArguments = Arguments.fromProperties(System.getProperties());
-        // 2) Add program arguments
-        allArguments.addAll(Arrays.asList(args));
-        // 3) Parse and validate
-        Arguments parsedArgs = new Arguments();
+    public static void main(String[] unusedArgs) throws IOException, ExecutionException, InterruptedException {
+        // Parse and validate arguments
+        ClientArguments args = new ClientArguments();
         JCommander.newBuilder()
-                .addObject(parsedArgs)
+                .addObject(args)
                 .build()
-                .parse(allArguments.toArray(new String[0]));
-        parsedArgs.postValidate();
+                .parse(Util.propertiesToArgs(System.getProperties(), ClientArguments.KNOWN_PROPERTIES).toArray(new String[0]));
+        args.postValidate();
 
-//        System.out.println("Query number: " + parsedArgs.getQueryNumber());
-
+        // Configure Hazelcast client
+        final ClientConfig ccfg = new ClientConfig()
+                .setGroupConfig(new GroupConfig()
+                        .setName(ClientArguments.GROUP_NAME)
+                        .setPassword(ClientArguments.GROUP_NAME)
+                )
+                .setNetworkConfig(new ClientNetworkConfig()
+                        .addAddress(args.getNodeIps().toArray(new String[0]))
+                );
+        // Start client with specified configuration
         logger.info("Client starting ...");
-        final ClientConfig ccfg = new ClientConfig();
-        // TODO use configuration from arguments
         final HazelcastInstance hz = com.hazelcast.client.HazelcastClient.newHazelcastClient(ccfg);
 
         Timer timer = new Timer(new File("time.txt"));
 
         // Read data
         System.out.println("Loading Map");
-        CsvParser parser = new CsvParser(new File("census100.csv").toPath());
+        CsvParser parser = new CsvParser(args.getInFile().toPath());
         logger.info("Start reading file...");
         timer.dataReadStart();
         List<CensusEntry> data = parser.parse();
@@ -70,8 +73,8 @@ public class Client {
 
         // Upload data to cluster
         System.out.println("Getting tracker");
-        JobTracker tracker = hz.getJobTracker(PREFIX + "_query" + parsedArgs.getQueryNumber());
-        final IList<CensusEntry> iData = hz.getList(PREFIX + "_data");
+        JobTracker tracker = hz.getJobTracker(ClientArguments.GROUP_NAME + "_query" + args.getQueryNumber());
+        final IList<CensusEntry> iData = hz.getList(ClientArguments.GROUP_NAME + "_data");
         iData.clear();
         iData.addAll(data);
 
@@ -82,7 +85,7 @@ public class Client {
         System.out.println("New job");
         Job<String, CensusEntry> job = tracker.newJob(source);
 
-        Integer queryNUmber = parsedArgs.getQueryNumber();
+        Integer queryNUmber = args.getQueryNumber();
 
         switch (queryNUmber) {
             case 1:
@@ -124,7 +127,7 @@ public class Client {
                 //QUERY2
                 JobCompletableFuture<List<Map.Entry<String, Integer>>> future2 = job.mapper(new CensusQuery2Mapper(prov)).combiner(new CensusQuery2CombinerFactory()).reducer(new CensusQuery2ReducerFactory()).submit(new CensusQuery2Collator(limit));
 
-                List<Map.Entry<String , Integer>> ans2 = future2.get();
+                List<Map.Entry<String, Integer>> ans2 = future2.get();
 
                 timer.queryEnd();
                 logger.info("End of map/reduce");
@@ -180,7 +183,5 @@ public class Client {
                 System.out.println(ans6.toString());
                 break;
         }
-
-
     }
 }
