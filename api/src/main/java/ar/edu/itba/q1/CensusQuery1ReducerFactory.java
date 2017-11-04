@@ -11,7 +11,7 @@ public class CensusQuery1ReducerFactory implements ReducerFactory<Region, Intege
     }
 
     private class CensusQuery1Reducer extends Reducer<Integer,Integer> {
-        private volatile int count;
+        private int count;
 
         @Override
         public void reduce(Integer value) {

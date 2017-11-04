@@ -10,7 +10,7 @@ public class CensusQuery6ReducerFactory implements ReducerFactory<String, Intege
     }
 
     private class CensusQuery6Reducer extends Reducer<Integer,Integer> {
-        private volatile int count;
+        private int count;
 
         @Override
         public void reduce(Integer value) {

@@ -16,8 +16,8 @@ public class CensusQuery3ReducerFactory implements ReducerFactory<Region,LongTup
 
 
     private class CensusQuery3Reducer extends Reducer<LongTuple, Double> {
-        private volatile double numerator;
-        private volatile double denominator;
+        private double numerator;
+        private double denominator;
 
         //Is it neccesary to use beginReduce method?
         @Override
