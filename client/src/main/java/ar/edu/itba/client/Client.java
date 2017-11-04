@@ -97,7 +97,7 @@ public class Client {
 
         switch (queryNUmber) {
             case 1:
-
+                // TODO delete all this code
                 //What we've done
 
                 /*ReducingSubmittableJob<String, String, List<CensusEntry>> future = job
@@ -124,6 +124,16 @@ public class Client {
                 logger.info("End of map/reduce");
                 System.out.println("Done");
                 System.out.println(ans1.toString());
+                // TODO delete up to here and replace with the following
+//                Q1Runner runner = new Q1Runner(hz, args);
+//                runner.readData();
+//                runner.uploadData();
+//                timer.queryStart();
+//                runner.runQuery();
+//                runner.writeResult();
+//                timer.queryEnd();
+//                System.out.println("Done");
+//                System.out.println(runner.getResult());
                 break;
             case 2:
                 //TODO: add query params to the configuration
