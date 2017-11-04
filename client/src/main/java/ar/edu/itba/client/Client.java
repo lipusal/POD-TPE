@@ -175,13 +175,13 @@ public class Client {
                 break;
             case 5:
                 logger.info("Running map/reduce");
-                ReducingSubmittableJob<String, Region, Double> future3 = job
+                ReducingSubmittableJob<String, Region, Double> future5 = job
                         .mapper(new CensusQuery5Mapper())
                         .reducer(new CensusQuery5ReducerFactory());
 
                 //Submit and block until done
                 timer.queryStart();
-                Map<Region, Double> result3 = future3.submit(new CensusQuery5Collator()).get();
+                Map<Region, Double> result3 = future5.submit(new CensusQuery5Collator()).get();
 
                 //QUERY5
                 timer.queryEnd();
