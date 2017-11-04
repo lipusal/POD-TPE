@@ -13,12 +13,6 @@ public class CensusQuery1ReducerFactory implements ReducerFactory<Region, Intege
     private class CensusQuery1Reducer extends Reducer<Integer,Integer> {
         private volatile int count;
 
-        //Is it neccesary to use beginReduce method?
-        @Override
-        public void beginReduce() {
-            count=0;
-        }
-
         @Override
         public void reduce(Integer value) {
             count++;
