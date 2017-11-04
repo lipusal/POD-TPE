@@ -2,6 +2,7 @@ package ar.edu.itba.client;
 
 import ar.edu.itba.CensusEntry;
 import ar.edu.itba.Region;
+import ar.edu.itba.ProvinceTuple;
 import ar.edu.itba.args.Util;
 import ar.edu.itba.client.util.ClientArguments;
 import ar.edu.itba.client.util.CsvParser;
@@ -22,12 +23,18 @@ import ar.edu.itba.q6.CensusQuery6Collator;
 import ar.edu.itba.q6.CensusQuery6CombinerFactory;
 import ar.edu.itba.q6.CensusQuery6Mapper;
 import ar.edu.itba.q6.CensusQuery6ReducerFactory;
+import ar.edu.itba.q7.first.CensusQuery7FirstMapper;
+import ar.edu.itba.q7.first.CensusQuery7FirstReducerFactory;
+import ar.edu.itba.q7.second.CensusQuery7SecondCollator;
+import ar.edu.itba.q7.second.CensusQuery7SecondMapper;
+import ar.edu.itba.q7.second.CensusQuery7SecondReducerFactory;
 import com.beust.jcommander.JCommander;
 import com.hazelcast.client.config.ClientConfig;
 import com.hazelcast.client.config.ClientNetworkConfig;
 import com.hazelcast.config.GroupConfig;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IList;
+import com.hazelcast.core.IMap;
 import com.hazelcast.mapreduce.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,6 +44,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
 public class Client {
@@ -195,6 +203,51 @@ public class Client {
                 logger.info("End of map/reduce");
                 System.out.println("Done");
                 System.out.println(ans6.toString());
+                break;
+            case 7:
+                logger.info("Running map/reduce");
+                ReducingSubmittableJob<String, String, Set<String>> future7 = job
+                        .mapper(new CensusQuery7FirstMapper())
+                        .reducer(new CensusQuery7FirstReducerFactory());
+
+                //Submit and block until done
+                timer.queryStart();
+                Map<String, Set<String>> result7 = future7.submit().get();
+
+                System.out.println("---RESULTS7---");
+                for(Map.Entry<String, Set<String>> entry : result7.entrySet()){
+                    System.out.println("** " + entry.getKey() + " ***");
+                    for(String s : entry.getValue()){
+                        System.out.print(s + " - ");
+                    }
+                    System.out.println("");
+                }
+
+                //Second Map
+                IMap<String, Set<String>> iData7 = hz.getMap(ClientArguments.GROUP_NAME + "_map");
+                iData7.clear();
+                iData7.putAll(result7);
+                KeyValueSource<String, Set<String>> source7 = KeyValueSource.fromMap(iData7);
+
+                Job<String, Set<String>> job7 = tracker.newJob(source7);
+
+                ReducingSubmittableJob<String, ProvinceTuple, Integer> future72 = job7
+                        .mapper(new CensusQuery7SecondMapper())
+                        .reducer(new CensusQuery7SecondReducerFactory());
+
+                Map<String, Integer> result72 = future72.submit(new CensusQuery7SecondCollator(0)).get();
+
+                System.out.println("----------Result72-------------");
+                for(Map.Entry<String, Integer> entry : result72.entrySet()){
+                    System.out.println(entry.getKey().split("=")[0] + "," + entry.getValue());
+                }
+                System.out.println("");
+
+                timer.queryEnd();
+
+
+                logger.info("End of map/reduce");
+                System.out.println("Done");
                 break;
         }
     }

@@ -1,12 +1,12 @@
 package ar.edu.itba.q7.second;
 
-import ar.edu.itba.Tuple;
+import ar.edu.itba.ProvinceTuple;
 import com.hazelcast.mapreduce.Reducer;
 import com.hazelcast.mapreduce.ReducerFactory;
 
-public class CensusQuery7SecondReducerFactory implements ReducerFactory<Tuple, Integer, Integer> {
+public class CensusQuery7SecondReducerFactory implements ReducerFactory<ProvinceTuple, Integer, Integer> {
     @Override
-    public Reducer<Integer, Integer> newReducer(Tuple tuple) {
+    public Reducer<Integer, Integer> newReducer(ProvinceTuple provinceTuple) {
         return new Reducer<Integer, Integer>() {
 
             private Integer counter = 0;
