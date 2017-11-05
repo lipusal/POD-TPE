@@ -39,8 +39,8 @@ public class ClientArguments {
     @Parameter(names = {"-n"}, converter = IntegerConverter.class)
     private Integer n;
 
-    @Parameter(names = {"-prov"}, converter = IntegerConverter.class)
-    private Integer prov;
+    @Parameter(names = {"-prov"})
+    private String prov;
 
     /**
      * Post validation, to be performed after initial schema validation.  Among other things, validates that the -n and
@@ -52,14 +52,30 @@ public class ClientArguments {
         if (queryNumber < 1 || queryNumber > 7) {
             throw new ParameterException("Query number must be between 1 and 7");
         }
-        if (n != null) {
-            if (queryNumber != 2 && queryNumber != 6 && queryNumber != 7) {
-                throw new ParameterException("-n parameter may only be used with query numbers 2, 6, 7");
-            }
+        if(nRequired() && n == null) {
+            throw new ParameterException("-n parameter is required for query # " + queryNumber);
+        } else if(!nRequired() && n != null) {
+            throw new ParameterException("-n parameter is not allowed for query #" + queryNumber);
         }
-        if (prov != null && queryNumber != 2) {
-            throw new ParameterException("-prov parameter may only be used with query number 2");
+        if(provRequired() && prov == null) {
+            throw new ParameterException("-prov parameter is required for query #" + queryNumber);
+        } else if (!provRequired() && prov != null) {
+            throw new ParameterException("-prov parameter is not allowed for query #" + queryNumber);
         }
+    }
+
+    /**
+     * @return Whether -n parameter is required. NOTE: If not required and provided, will not pass validation.
+     */
+    private boolean nRequired() {
+        return queryNumber == 2 || queryNumber == 6 || queryNumber == 7;
+    }
+
+    /**
+     * @return Whether -prov parameter is required. NOTE: If not required and provided, will not pass validation.
+     */
+    private boolean provRequired() {
+        return queryNumber == 2;
     }
 
     public List<String> getNodeIps() {
@@ -86,7 +102,7 @@ public class ClientArguments {
         return n;
     }
 
-    public Integer getProv() {
+    public String getProv() {
         return prov;
     }
 }
