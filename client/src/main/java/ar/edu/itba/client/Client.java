@@ -3,6 +3,7 @@ package ar.edu.itba.client;
 import ar.edu.itba.CensusEntry;
 import ar.edu.itba.Region;
 import ar.edu.itba.args.Util;
+import ar.edu.itba.client.strategy.Q3Runner;
 import ar.edu.itba.client.util.ClientArguments;
 import ar.edu.itba.client.util.CsvParser;
 import ar.edu.itba.client.util.Timer;
@@ -153,20 +154,15 @@ public class Client {
                 System.out.println(ans2.toString());
                 break;
             case 3:
-                logger.info("Running map/reduce");
+                Q3Runner runner = new Q3Runner(hz, args);
+                runner.readData();
+                runner.uploadData();
                 timer.queryStart();
-
-                //QUERY3
-                JobCompletableFuture<Map<Region, Double>> future3 = job.mapper(new CensusQuery3Mapper()).combiner(new CensusQuery3CombinerFactory()).reducer(new CensusQuery3ReducerFactory()).submit(new CensusQuery3Collator());
-
-                Map<Region, Double> ans3 = future3.get();
-
+                runner.runQuery();
+                runner.writeResult();
                 timer.queryEnd();
-                logger.info("End of map/reduce");
                 System.out.println("Done");
-                for (Map.Entry<Region, Double> entry : ans3.entrySet()) {
-                    System.out.printf(entry.getKey() + ",%.2f\n",entry.getValue());
-                }
+                System.out.println(runner.getResultString());
                 break;
             case 4:
                 ReducingSubmittableJob<String, Region, Integer> future = job
