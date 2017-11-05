@@ -11,8 +11,8 @@ public class CensusQuery2CombinerFactory implements CombinerFactory<String, Inte
     }
 
     private class CensusQuery2Combiner extends Combiner<Integer,Integer>{
+        private int count = 0;
 
-        private int count=0;
         @Override
         public void combine(Integer value) {
             count = count + value;
