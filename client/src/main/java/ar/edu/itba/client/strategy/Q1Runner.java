@@ -6,13 +6,11 @@ import ar.edu.itba.client.util.ClientArguments;
 import ar.edu.itba.q1.CensusQuery1Mapper;
 import ar.edu.itba.q1.CensusQuery1ReducerFactory;
 import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.mapreduce.Job;
-import com.hazelcast.mapreduce.JobCompletableFuture;
 import com.hazelcast.mapreduce.KeyValueSource;
 
-import java.io.FileWriter;
-import java.io.IOException;
+import java.util.Collections;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 
 public class Q1Runner extends BaseQueryRunner {
@@ -25,27 +23,20 @@ public class Q1Runner extends BaseQueryRunner {
     @Override
     public void runQuery() throws ExecutionException, InterruptedException {
         KeyValueSource<String, CensusEntry> keyValueSource = KeyValueSource.fromList(iData);
-        Job<String, CensusEntry> job = getJobTracker().newJob(keyValueSource);
-        JobCompletableFuture<Map<Region, Integer>> completableFuture = job.mapper(new CensusQuery1Mapper()).reducer(new CensusQuery1ReducerFactory()).submit();
-
-        result = completableFuture.get();
-        System.out.println(result.toString());
-    }
-
-    @Override
-    public void writeResult() throws IOException {
-        FileWriter fw = new FileWriter(arguments.getOutFile());
-        for (Map.Entry<Region, Integer> entry : result.entrySet()) {
-            fw.write(entry.getKey() + "," + entry.getValue() + "\n");
-
-        }
-        fw.close();
+        result = getJobTracker().newJob(keyValueSource)
+                .mapper(new CensusQuery1Mapper())
+                .reducer(new CensusQuery1ReducerFactory())
+                .submit().get();
     }
 
     @Override
     public String getResultString() {
         StringBuilder builder = new StringBuilder();
-        result.forEach((key, value) -> builder.append(key).append(",").append(value).append("\n"));
+        Optional.ofNullable(result).orElse(Collections.emptyMap()).forEach((key, value) ->
+                builder.append(key)
+                        .append(",")
+                        .append(value)
+                        .append("\n"));
         return builder.toString();
     }
 }
