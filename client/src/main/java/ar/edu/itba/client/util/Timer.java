@@ -3,9 +3,9 @@ package ar.edu.itba.client.util;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -17,6 +17,7 @@ public class Timer {
 
     private final FileWriter timeWriter;
     private Status status;
+    private List<LocalDateTime> timestamps = new ArrayList<>(Status.values().length);
 
     public Timer(File timeFile) throws IOException {
         this.timeWriter = new FileWriter(timeFile);
@@ -32,7 +33,9 @@ public class Timer {
         if (status != Status.NOT_STARTED) {
             throw new IllegalStateException("dataReadStart() can only be called once, and before any other start/end methods");
         }
-        timeWriter.write(LocalDateTime.now() + " - Data read start\n");
+        LocalDateTime now = LocalDateTime.now();
+        timestamps.add(now);
+        timeWriter.write(now + " - Data read start\n");
         status = Status.READING_DATA;
     }
 
@@ -45,7 +48,9 @@ public class Timer {
         if (status != Status.READING_DATA) {
             throw new IllegalStateException("dataReadEnd() can only be called once, after dataReadStart()");
         }
-        timeWriter.write(LocalDateTime.now() + " - Data read end\n");
+        LocalDateTime now = LocalDateTime.now();
+        timestamps.add(now);
+        timeWriter.write(now + " - Data read end\n");
         status = Status.READ_DATA;
     }
 
@@ -58,7 +63,9 @@ public class Timer {
         if (status != Status.READ_DATA) {
             throw new IllegalStateException("queryStart() can only be called once, after dataReadEnd()");
         }
-        timeWriter.write(LocalDateTime.now() + " - Query start\n");
+        LocalDateTime now = LocalDateTime.now();
+        timestamps.add(now);
+        timeWriter.write(now + " - Query start\n");
         status = Status.EXECUTING_QUERY;
     }
 
@@ -72,7 +79,11 @@ public class Timer {
         if (status != Status.EXECUTING_QUERY) {
             throw new IllegalStateException("queryEnd() can only be called once, after queryStart()");
         }
-        timeWriter.write(LocalDateTime.now() + " - Query end\n");
+        LocalDateTime now = LocalDateTime.now();
+        timestamps.add(now);
+        timeWriter.write(now + " - Query end\n");
+        Duration elapsedTime = Duration.between(timestamps.get(0), now);
+        timeWriter.write("Total elapsed time: " + elapsedTime.toString() + "\n");
         timeWriter.close();
         status = Status.DONE;
     }
