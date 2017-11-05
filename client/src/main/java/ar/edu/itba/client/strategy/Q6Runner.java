@@ -1,22 +1,16 @@
 package ar.edu.itba.client.strategy;
 
 
-import ar.edu.itba.CensusEntry;
-import ar.edu.itba.Region;
+import ar.edu.itba.Tuple;
 import ar.edu.itba.client.util.ClientArguments;
 import ar.edu.itba.client.util.CsvParser;
 import ar.edu.itba.q6.CensusQuery6Collator;
-import ar.edu.itba.q6.CensusQuery6CombinerFactory;
 import ar.edu.itba.q6.CensusQuery6Mapper;
 import ar.edu.itba.q6.CensusQuery6ReducerFactory;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
-import com.hazelcast.mapreduce.Job;
-import com.hazelcast.mapreduce.JobCompletableFuture;
 import com.hazelcast.mapreduce.KeyValueSource;
 
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -24,9 +18,9 @@ import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 
 public class Q6Runner extends BaseQueryRunner {
+    private Map<Long, Tuple<String, String>> dataMap;
+    private IMap<Long, Tuple<String, String>> iData;
     private Map<String, Integer> result;
-    private IMap<Long, String> iData;
-    private Map<Long, String> dataMap;
     private long id = 1;
 
     public Q6Runner(HazelcastInstance client, ClientArguments arguments) {
@@ -38,7 +32,7 @@ public class Q6Runner extends BaseQueryRunner {
         CsvParser parser = new CsvParser(arguments.getInFile().toPath());
         dataMap = new HashMap<>();
         parser.parse(splitLine ->
-                dataMap.put(id++, CsvParser.getDepartment(splitLine))
+                dataMap.put(id++, new Tuple<>(CsvParser.getDepartment(splitLine), CsvParser.getProvince(splitLine)))
         );
     }
 
@@ -51,10 +45,9 @@ public class Q6Runner extends BaseQueryRunner {
 
     @Override
     public void runQuery() throws ExecutionException, InterruptedException {
-        KeyValueSource<Long, String> keyValueSource = KeyValueSource.fromMap(iData);
+        KeyValueSource<Long, Tuple<String, String>> keyValueSource = KeyValueSource.fromMap(iData);
         result = getJobTracker().newJob(keyValueSource)
                 .mapper(new CensusQuery6Mapper())
-                .combiner(new CensusQuery6CombinerFactory())
                 .reducer(new CensusQuery6ReducerFactory())
                 .submit(new CensusQuery6Collator(arguments.getN())).get();
     }
