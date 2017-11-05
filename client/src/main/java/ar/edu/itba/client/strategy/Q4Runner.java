@@ -4,16 +4,14 @@ package ar.edu.itba.client.strategy;
 import ar.edu.itba.CensusEntry;
 import ar.edu.itba.Region;
 import ar.edu.itba.client.util.ClientArguments;
-import ar.edu.itba.q4.CensusToRegionHomeIdMapper;
-import ar.edu.itba.q4.HomeCountCollator;
-import ar.edu.itba.q4.RegionToHomeCountReducer;
+import ar.edu.itba.q4.CensusQuery4Mapper;
+import ar.edu.itba.q4.CensusQuery4Collator;
+import ar.edu.itba.q4.CensusQuery4ReducerFactory;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.mapreduce.Job;
 import com.hazelcast.mapreduce.JobCompletableFuture;
 import com.hazelcast.mapreduce.KeyValueSource;
 
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
@@ -31,9 +29,9 @@ public class Q4Runner extends BaseQueryRunner {
         KeyValueSource<String, CensusEntry> keyValueSource = KeyValueSource.fromList(iData);
         Job<String, CensusEntry> job = getJobTracker().newJob(keyValueSource);
         JobCompletableFuture<Map<Region, Integer>> completableFuture = job
-                .mapper(new CensusToRegionHomeIdMapper())
-                .reducer(new RegionToHomeCountReducer())
-                .submit(new HomeCountCollator());
+                .mapper(new CensusQuery4Mapper())
+                .reducer(new CensusQuery4ReducerFactory())
+                .submit(new CensusQuery4Collator());
         result = completableFuture.get();
     }
 
