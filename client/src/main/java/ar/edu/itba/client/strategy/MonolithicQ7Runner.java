@@ -31,15 +31,15 @@ public class MonolithicQ7Runner extends BaseQueryRunner {
 
     @Override
     public void uploadData() {
-        iData = client.getList(STEP_1_COLLECTION);
+        iData = client.getMap(STEP_1_COLLECTION);
         iData.clear();
-        iData.addAll(data);
+        iData.putAll(dataMap);
     }
 
     @Override
     public void runQuery() throws ExecutionException, InterruptedException {
         // First step
-        KeyValueSource<String, CensusEntry> source1 = KeyValueSource.fromList(iData);
+        KeyValueSource<String, CensusEntry> source1 = KeyValueSource.fromMap(iData);
         Map<String, Set<String>> tempResult = getJobTracker().newJob(source1)
                 .mapper(new CensusQuery7FirstMapper())
                 .reducer(new CensusQuery7FirstReducerFactory())

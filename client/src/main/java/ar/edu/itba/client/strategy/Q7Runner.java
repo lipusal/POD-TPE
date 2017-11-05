@@ -74,14 +74,14 @@ public class Q7Runner extends BaseQueryRunner {
 
         @Override
         public void uploadData() {
-            iData = client.getList(Q7Runner.this.STEP_1_COLLECTION);
+            iData = client.getMap(Q7Runner.this.STEP_1_COLLECTION);
             iData.clear();
-            iData.addAll(data);
+            iData.putAll(dataMap);
         }
 
         @Override
         public void runQuery() throws ExecutionException, InterruptedException {
-            KeyValueSource<String, CensusEntry> source = KeyValueSource.fromList(iData);
+            KeyValueSource<String, CensusEntry> source = KeyValueSource.fromMap(iData);
             result = getJobTracker().newJob(source)
                     .mapper(new CensusQuery7FirstMapper())
                     .reducer(new CensusQuery7FirstReducerFactory())

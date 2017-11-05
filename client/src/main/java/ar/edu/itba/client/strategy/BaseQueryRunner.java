@@ -5,18 +5,22 @@ import ar.edu.itba.client.util.ClientArguments;
 import ar.edu.itba.client.util.CsvParser;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IList;
+import com.hazelcast.core.IMap;
 import com.hazelcast.mapreduce.JobTracker;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public abstract class BaseQueryRunner implements QueryRunner {
     protected final HazelcastInstance client;
     protected final ClientArguments arguments;
     protected List<CensusEntry> data;
-    // TODO use IMap
-    protected IList<CensusEntry> iData;
+    protected Map<String, CensusEntry> dataMap;
+    protected IMap<String, CensusEntry> iData;
+    private long key = 1;
 
 
     public BaseQueryRunner(HazelcastInstance client, ClientArguments arguments) {
@@ -31,6 +35,8 @@ public abstract class BaseQueryRunner implements QueryRunner {
     public void readData() {
         CsvParser parser = new CsvParser(arguments.getInFile().toPath());
         data = parser.parse();
+        this.dataMap = new HashMap<>(data.size());
+        data.forEach(censusEntry -> dataMap.put(Long.toString(key++), censusEntry));
     }
 
     /**
@@ -38,9 +44,9 @@ public abstract class BaseQueryRunner implements QueryRunner {
      */
     @Override
     public void uploadData() {
-        iData = client.getList(getCollectionName());
+        iData = client.getMap(getCollectionName());
         iData.clear();
-        iData.addAll(data);
+        iData.putAll(dataMap);
     }
 
     @Override
