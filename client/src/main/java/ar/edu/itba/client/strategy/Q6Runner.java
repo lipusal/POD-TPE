@@ -15,7 +15,9 @@ import com.hazelcast.mapreduce.KeyValueSource;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 
 public class Q6Runner extends BaseQueryRunner {
@@ -38,7 +40,8 @@ public class Q6Runner extends BaseQueryRunner {
     @Override
     public String getResultString() {
         StringBuilder builder = new StringBuilder();
-        result.forEach((key, value) -> builder.append(key).append(",").append(value).append("\n"));
+        Optional.ofNullable(result).orElse(Collections.emptyMap()).forEach((key, value) ->
+                builder.append(key).append(",").append(value).append("\n"));
         return builder.toString();
     }
 }
