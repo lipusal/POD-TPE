@@ -37,18 +37,7 @@ public class Q2Runner extends BaseQueryRunner {
     }
 
     @Override
-    public void writeResult() throws IOException {
-        FileWriter fw = new FileWriter(arguments.getOutFile());
-        fw.write(getResultString());
-        fw.close();
-    }
-
-    @Override
-    public void printResult() {
-        System.out.println(getResultString());
-    }
-
-    private String getResultString() {
+    public String getResultString() {
         StringBuilder builder = new StringBuilder();
         Optional.ofNullable(result).orElse(Collections.emptyList()).forEach(stringIntegerEntry ->
                 builder.append(stringIntegerEntry.getKey())

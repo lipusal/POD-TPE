@@ -145,7 +145,7 @@ public class Client {
                 runner.writeResult();
                 timer.queryEnd();
                 System.out.println("Done");
-                runner.printResult();
+                System.out.println(runner.getResultString());
                 break;
             case 3:
                 logger.info("Running map/reduce");
