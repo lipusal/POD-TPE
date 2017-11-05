@@ -3,6 +3,7 @@ package ar.edu.itba.client;
 import ar.edu.itba.CensusEntry;
 import ar.edu.itba.Region;
 import ar.edu.itba.args.Util;
+import ar.edu.itba.client.strategy.Q3Runner;
 import ar.edu.itba.client.util.ClientArguments;
 import ar.edu.itba.client.util.CsvParser;
 import ar.edu.itba.client.util.Timer;
@@ -167,6 +168,17 @@ public class Client {
                 for (Map.Entry<Region, Double> entry : ans3.entrySet()) {
                     System.out.printf(entry.getKey() + ",%.2f\n",entry.getValue());
                 }
+
+                // TODO delete up to here and replace with the following
+//                Q3Runner runner = new Q3Runner(hz, args);
+//                runner.readData();
+//                runner.uploadData();
+//                timer.queryStart();
+//                runner.runQuery();
+//                runner.writeResult();
+//                timer.queryEnd();
+//                System.out.println("Done");
+//                System.out.println(runner.getResultString());
                 break;
             case 4:
                 ReducingSubmittableJob<String, Region, Integer> future = job
