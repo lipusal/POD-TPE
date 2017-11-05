@@ -36,18 +36,9 @@ public class Q4Runner extends BaseQueryRunner {
     }
 
     @Override
-    public void writeResult() throws IOException {
-        FileWriter fw = new FileWriter(arguments.getOutFile());
-        fw.write(getResultString());
-        fw.close();
-    }
-
-    @Override
     public String getResultString() {
         StringBuilder stringBuilder = new StringBuilder();
-        for (Map.Entry<Region, Integer> entry : result.entrySet()) {
-            stringBuilder.append(entry.getKey()).append(",").append(entry.getValue()).append("\n");
-        }
+        result.forEach((key, value) -> stringBuilder.append(key).append(",").append(value).append("\n"));
         return stringBuilder.toString();
     }
 }
