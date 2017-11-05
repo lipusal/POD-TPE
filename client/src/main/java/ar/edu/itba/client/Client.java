@@ -4,43 +4,31 @@ import ar.edu.itba.CensusEntry;
 import ar.edu.itba.Region;
 import ar.edu.itba.args.Util;
 import ar.edu.itba.client.strategy.Q2Runner;
+import ar.edu.itba.client.strategy.Q3Runner;
+import ar.edu.itba.client.strategy.Q4Runner;
+import ar.edu.itba.client.strategy.Q5Runner;
+import ar.edu.itba.client.strategy.Q6Runner;
 import ar.edu.itba.client.util.ClientArguments;
 import ar.edu.itba.client.util.CsvParser;
 import ar.edu.itba.client.util.Timer;
 import ar.edu.itba.q1.CensusQuery1Mapper;
 import ar.edu.itba.q1.CensusQuery1ReducerFactory;
-import ar.edu.itba.q2.CensusQuery2Collator;
-import ar.edu.itba.q2.CensusQuery2CombinerFactory;
-import ar.edu.itba.q2.CensusQuery2Mapper;
-import ar.edu.itba.q2.CensusQuery2ReducerFactory;
-import ar.edu.itba.q3.CensusQuery3Collator;
-import ar.edu.itba.q3.CensusQuery3CombinerFactory;
-import ar.edu.itba.q3.CensusQuery3Mapper;
-import ar.edu.itba.q3.CensusQuery3ReducerFactory;
-import ar.edu.itba.q4.CensusToRegionHomeIdMapper;
-import ar.edu.itba.q4.HomeCountCollator;
-import ar.edu.itba.q4.RegionToHomeCountReducer;
-import ar.edu.itba.q5.CensusQuery5Collator;
-import ar.edu.itba.q5.CensusQuery5Mapper;
-import ar.edu.itba.q5.CensusQuery5ReducerFactory;
-import ar.edu.itba.q6.CensusQuery6Collator;
-import ar.edu.itba.q6.CensusQuery6CombinerFactory;
-import ar.edu.itba.q6.CensusQuery6Mapper;
-import ar.edu.itba.q6.CensusQuery6ReducerFactory;
 import com.beust.jcommander.JCommander;
 import com.hazelcast.client.config.ClientConfig;
 import com.hazelcast.client.config.ClientNetworkConfig;
 import com.hazelcast.config.GroupConfig;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IList;
-import com.hazelcast.mapreduce.*;
+import com.hazelcast.mapreduce.Job;
+import com.hazelcast.mapreduce.JobCompletableFuture;
+import com.hazelcast.mapreduce.JobTracker;
+import com.hazelcast.mapreduce.KeyValueSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
@@ -148,69 +136,48 @@ public class Client {
                 System.out.println(runner.getResultString());
                 break;
             case 3:
-                logger.info("Running map/reduce");
+                Q3Runner runner = new Q3Runner(hz, args);
+                runner.readData();
+                runner.uploadData();
                 timer.queryStart();
-
-                //QUERY3
-                JobCompletableFuture<Map<Region, Double>> future3 = job.mapper(new CensusQuery3Mapper()).combiner(new CensusQuery3CombinerFactory()).reducer(new CensusQuery3ReducerFactory()).submit(new CensusQuery3Collator());
-
-                Map<Region, Double> ans3 = future3.get();
-
+                runner.runQuery();
+                runner.writeResult();
                 timer.queryEnd();
-                logger.info("End of map/reduce");
                 System.out.println("Done");
-                for (Map.Entry<Region, Double> entry : ans3.entrySet()) {
-                    System.out.printf(entry.getKey() + ",%.2f\n",entry.getValue());
-                }
+                System.out.println(runner.getResultString());
                 break;
             case 4:
-                ReducingSubmittableJob<String, Region, Integer> future = job
-                        .mapper(new CensusToRegionHomeIdMapper())
-                        .reducer(new RegionToHomeCountReducer());
-
-                //Submit and block until done
+                Q4Runner runner = new Q4Runner(hz, args);
+                runner.readData();
+                runner.uploadData();
                 timer.queryStart();
-                Map<Region, Integer> result = future.submit(new HomeCountCollator()).get();
-                //TODO write result to file
+                runner.runQuery();
+                runner.writeResult();
                 timer.queryEnd();
-                System.out.println(result);
-
-                logger.info("End of map/reduce");
                 System.out.println("Done");
+                System.out.println(runner.getResultString());
                 break;
             case 5:
-                logger.info("Running map/reduce");
-                ReducingSubmittableJob<String, Region, Double> future5 = job
-                        .mapper(new CensusQuery5Mapper())
-                        .reducer(new CensusQuery5ReducerFactory());
-
-                //Submit and block until done
+                Q5Runner runner = new Q5Runner(hz, args);
+                runner.readData();
+                runner.uploadData();
                 timer.queryStart();
-                Map<Region, Double> result3 = future5.submit(new CensusQuery5Collator()).get();
-
-                //QUERY5
+                runner.runQuery();
+                runner.writeResult();
                 timer.queryEnd();
-                for(Map.Entry<Region, Double> entry : result3.entrySet()){
-                    System.out.printf(Locale.US, "%s,%.2f\n",entry.getKey().toString(),entry.getValue());
-                }
-
-                logger.info("End of map/reduce");
                 System.out.println("Done");
+                System.out.println(runner.getResultString());
                 break;
             case 6:
-                int minLimit = 5;
-                logger.info("Running map/reduce");
+                Q6Runner runner = new Q6Runner(hz, args);
+                runner.readData();
+                runner.uploadData();
                 timer.queryStart();
-
-                //QUERY6
-                JobCompletableFuture<Map<String, Integer>> future6 = job.mapper(new CensusQuery6Mapper()).combiner(new CensusQuery6CombinerFactory()).reducer(new CensusQuery6ReducerFactory()).submit(new CensusQuery6Collator(minLimit));
-
-                Map<String, Integer> ans6 = future6.get();
-
+                runner.runQuery();
+                runner.writeResult();
                 timer.queryEnd();
-                logger.info("End of map/reduce");
                 System.out.println("Done");
-                System.out.println(ans6.toString());
+                System.out.println(runner.getResultString());
                 break;
         }
     }
