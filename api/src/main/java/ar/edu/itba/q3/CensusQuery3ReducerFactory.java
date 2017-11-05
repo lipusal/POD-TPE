@@ -1,21 +1,21 @@
 package ar.edu.itba.q3;
 
 
-import ar.edu.itba.LongTuple;
 import ar.edu.itba.Region;
+import ar.edu.itba.Tuple;
 import com.hazelcast.mapreduce.Reducer;
 import com.hazelcast.mapreduce.ReducerFactory;
 
-public class CensusQuery3ReducerFactory implements ReducerFactory<Region,LongTuple,Double> {
+public class CensusQuery3ReducerFactory implements ReducerFactory<Region, Tuple<Long, Long>,Double> {
 
 
     @Override
-    public Reducer<LongTuple, Double> newReducer(Region region) {
+    public Reducer<Tuple<Long, Long>, Double> newReducer(Region region) {
         return new CensusQuery3Reducer();
     }
 
 
-    private class CensusQuery3Reducer extends Reducer<LongTuple, Double> {
+    private class CensusQuery3Reducer extends Reducer<Tuple<Long, Long>, Double> {
         private double numerator;
         private double denominator;
 
@@ -27,9 +27,9 @@ public class CensusQuery3ReducerFactory implements ReducerFactory<Region,LongTup
         }
 
         @Override
-        public void reduce(LongTuple tuple) {
-            numerator += tuple.getKey();
-            denominator += tuple.getValue();
+        public void reduce(Tuple<Long, Long> numeratorDenominatorTuple) {
+            numerator += numeratorDenominatorTuple.getFirst();
+            denominator += numeratorDenominatorTuple.getSecond();
         }
 
         @Override

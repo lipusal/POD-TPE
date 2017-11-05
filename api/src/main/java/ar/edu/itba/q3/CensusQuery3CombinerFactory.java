@@ -1,20 +1,17 @@
 package ar.edu.itba.q3;
 
-import ar.edu.itba.LongTuple;
 import ar.edu.itba.Region;
-import ar.edu.itba.Status;
+import ar.edu.itba.Tuple;
 import com.hazelcast.mapreduce.Combiner;
 import com.hazelcast.mapreduce.CombinerFactory;
 
-import java.awt.*;
-
-public class CensusQuery3CombinerFactory implements CombinerFactory<Region, Integer, LongTuple>{
+public class CensusQuery3CombinerFactory implements CombinerFactory<Region, Integer, Tuple<Long, Long>>{
     @Override
-    public Combiner<Integer, LongTuple> newCombiner(Region status) {
+    public Combiner<Integer, Tuple<Long, Long>> newCombiner(Region status) {
         return new CensusQuery3Combiner();
     }
 
-    private class CensusQuery3Combiner extends Combiner<Integer,LongTuple>{
+    private class CensusQuery3Combiner extends Combiner<Integer, Tuple<Long, Long>>{
 
         private long numerator = 0;
         private long denominator = 0;
@@ -26,11 +23,11 @@ public class CensusQuery3CombinerFactory implements CombinerFactory<Region, Inte
         }
 
         @Override
-        public LongTuple finalizeChunk() {
-            return new LongTuple(numerator, denominator);
+        public Tuple<Long, Long> finalizeChunk() {
+            return new Tuple<>(numerator, denominator);
         }
 
-        public void reset(){
+        public void reset() {
             numerator = 0;
             denominator = 0;
         }
