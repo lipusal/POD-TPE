@@ -1,5 +1,7 @@
 package ar.edu.itba.client;
 
+import ar.edu.itba.CensusEntry;
+import ar.edu.itba.Region;
 import ar.edu.itba.args.Util;
 import ar.edu.itba.client.strategy.*;
 import ar.edu.itba.client.util.ClientArguments;
@@ -88,9 +90,7 @@ public class Client {
             case 6:
                 return new Q6Runner(client, arguments);
             case 7:
-                throw new UnsupportedOperationException("Q7 runner not implemented yet");
-                // TODO: Use Q7Runner
-                //return new Q7Runner(client, arguments);
+                return new Q7Runner(client, arguments);
             default:
                 throw new IllegalArgumentException("Invalid query number " + arguments.getQueryNumber() + ". Valid numbers are 1-7.");
         }
