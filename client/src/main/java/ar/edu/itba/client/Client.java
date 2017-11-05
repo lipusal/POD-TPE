@@ -3,19 +3,16 @@ package ar.edu.itba.client;
 import ar.edu.itba.CensusEntry;
 import ar.edu.itba.Region;
 import ar.edu.itba.args.Util;
-import ar.edu.itba.client.strategy.Q5Runner;
+import ar.edu.itba.client.strategy.Q2Runner;
 import ar.edu.itba.client.strategy.Q3Runner;
 import ar.edu.itba.client.strategy.Q4Runner;
+import ar.edu.itba.client.strategy.Q5Runner;
 import ar.edu.itba.client.strategy.Q6Runner;
 import ar.edu.itba.client.util.ClientArguments;
 import ar.edu.itba.client.util.CsvParser;
 import ar.edu.itba.client.util.Timer;
 import ar.edu.itba.q1.CensusQuery1Mapper;
 import ar.edu.itba.q1.CensusQuery1ReducerFactory;
-import ar.edu.itba.q2.CensusQuery2Collator;
-import ar.edu.itba.q2.CensusQuery2CombinerFactory;
-import ar.edu.itba.q2.CensusQuery2Mapper;
-import ar.edu.itba.q2.CensusQuery2ReducerFactory;
 import com.beust.jcommander.JCommander;
 import com.hazelcast.client.config.ClientConfig;
 import com.hazelcast.client.config.ClientNetworkConfig;
@@ -128,21 +125,15 @@ public class Client {
 //                System.out.println(runner.getResult());
                 break;
             case 2:
-                //TODO: add query params to the configuration
-                String prov = "Buenos Aires";
-                int limit = 10;
-                logger.info("Running map/reduce");
+                Q2Runner runner = new Q2Runner(hz, args);
+                runner.readData();
+                runner.uploadData();
                 timer.queryStart();
-
-                //QUERY2
-                JobCompletableFuture<List<Map.Entry<String, Integer>>> future2 = job.mapper(new CensusQuery2Mapper(prov)).combiner(new CensusQuery2CombinerFactory()).reducer(new CensusQuery2ReducerFactory()).submit(new CensusQuery2Collator(limit));
-
-                List<Map.Entry<String, Integer>> ans2 = future2.get();
-
+                runner.runQuery();
+                runner.writeResult();
                 timer.queryEnd();
-                logger.info("End of map/reduce");
                 System.out.println("Done");
-                System.out.println(ans2.toString());
+                System.out.println(runner.getResultString());
                 break;
             case 3:
                 Q3Runner runner = new Q3Runner(hz, args);
