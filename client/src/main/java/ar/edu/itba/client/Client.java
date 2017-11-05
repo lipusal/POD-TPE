@@ -154,31 +154,15 @@ public class Client {
                 System.out.println(ans2.toString());
                 break;
             case 3:
-                logger.info("Running map/reduce");
+                Q3Runner runner = new Q3Runner(hz, args);
+                runner.readData();
+                runner.uploadData();
                 timer.queryStart();
-
-                //QUERY3
-                JobCompletableFuture<Map<Region, Double>> future3 = job.mapper(new CensusQuery3Mapper()).combiner(new CensusQuery3CombinerFactory()).reducer(new CensusQuery3ReducerFactory()).submit(new CensusQuery3Collator());
-
-                Map<Region, Double> ans3 = future3.get();
-
+                runner.runQuery();
+                runner.writeResult();
                 timer.queryEnd();
-                logger.info("End of map/reduce");
                 System.out.println("Done");
-                for (Map.Entry<Region, Double> entry : ans3.entrySet()) {
-                    System.out.printf(entry.getKey() + ",%.2f\n",entry.getValue());
-                }
-
-                // TODO delete up to here and replace with the following
-//                Q3Runner runner = new Q3Runner(hz, args);
-//                runner.readData();
-//                runner.uploadData();
-//                timer.queryStart();
-//                runner.runQuery();
-//                runner.writeResult();
-//                timer.queryEnd();
-//                System.out.println("Done");
-//                System.out.println(runner.getResultString());
+                System.out.println(runner.getResultString());
                 break;
             case 4:
                 ReducingSubmittableJob<String, Region, Integer> future = job

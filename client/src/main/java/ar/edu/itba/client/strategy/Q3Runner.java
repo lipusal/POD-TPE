@@ -30,24 +30,17 @@ public class Q3Runner extends BaseQueryRunner {
     @Override
     public void runQuery() throws ExecutionException, InterruptedException {
         KeyValueSource<String, CensusEntry> keyValueSource = KeyValueSource.fromList(iData);
-        Job<String, CensusEntry> job = getJobTracker().newJob(keyValueSource);
-        JobCompletableFuture<Map<Region, Double>> future3 = job.mapper(new CensusQuery3Mapper()).combiner(new CensusQuery3CombinerFactory()).reducer(new CensusQuery3ReducerFactory()).submit(new CensusQuery3Collator());
-        result = future3.get();
-    }
-
-    @Override
-    public void writeResult() throws IOException {
-        FileWriter fw = new FileWriter(arguments.getOutFile());
-        fw.write(getResultString());
-        fw.close();
+        result = getJobTracker().newJob(keyValueSource)
+                .mapper(new CensusQuery3Mapper())
+                .combiner(new CensusQuery3CombinerFactory())
+                .reducer(new CensusQuery3ReducerFactory())
+                .submit(new CensusQuery3Collator()).get();
     }
 
     @Override
     public String getResultString() {
         StringBuilder stringBuilder = new StringBuilder();
-        for (Map.Entry<Region, Double> entry : result.entrySet()) {
-            stringBuilder.append(entry.getKey()).append(String.format(",%.2f\n", entry.getValue()));
-        }
+        result.forEach((key, value) -> stringBuilder.append(key).append(String.format(",%.2f\n", value)));
         return stringBuilder.toString();
     }
 }
