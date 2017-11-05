@@ -6,7 +6,7 @@ import java.util.*;
 
 public class CensusQuery2Collator implements Collator<Map.Entry<String,Integer>,List<Map.Entry<String,Integer>>>{
 
-    int limit;
+    private int limit;
 
     public CensusQuery2Collator(int limit){
         this.limit = limit;
@@ -19,9 +19,9 @@ public class CensusQuery2Collator implements Collator<Map.Entry<String,Integer>,
         for(Map.Entry<String,Integer> value: values){
             aux.add(value);
         }
-        Collections.sort(aux, new IntegerComparator());
+        aux.sort(new IntegerComparator());
 
-        return aux.subList(0,limit);
+        return aux.subList(0, Math.min(aux.size(), limit));
     }
 
     private static class IntegerComparator implements Comparator<Map.Entry<String,Integer>>{
