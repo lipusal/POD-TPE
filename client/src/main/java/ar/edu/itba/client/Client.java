@@ -1,7 +1,5 @@
 package ar.edu.itba.client;
 
-import ar.edu.itba.CensusEntry;
-import ar.edu.itba.Region;
 import ar.edu.itba.args.Util;
 import ar.edu.itba.client.strategy.*;
 import ar.edu.itba.client.util.ClientArguments;

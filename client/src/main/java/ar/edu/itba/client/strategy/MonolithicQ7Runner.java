@@ -12,7 +12,9 @@ import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
 import com.hazelcast.mapreduce.KeyValueSource;
 
+import java.util.Collections;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
@@ -56,7 +58,7 @@ public class MonolithicQ7Runner extends BaseQueryRunner {
     @Override
     public String getResultString() {
         StringBuilder builder = new StringBuilder();
-        result.forEach((s, integer) ->
+        Optional.ofNullable(result).orElse(Collections.emptyMap()).forEach((s, integer) ->
                 builder.append(s.split("=")[0])
                     .append(",")
                     .append(integer)

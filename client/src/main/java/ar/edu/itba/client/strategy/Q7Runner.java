@@ -91,7 +91,7 @@ public class Q7Runner extends BaseQueryRunner {
         @Override
         public String getResultString() {
             StringBuilder builder = new StringBuilder();
-            result.forEach((s, strings) -> {
+            Optional.ofNullable(result).orElse(Collections.emptyMap()).forEach((s, strings) -> {
                 builder.append(s).append(": ");
                 strings.forEach(s1 -> builder.append(s1).append(" - "));
                 builder.append("\n");
@@ -130,7 +130,7 @@ public class Q7Runner extends BaseQueryRunner {
         @Override
         public String getResultString() {
             StringBuilder builder = new StringBuilder();
-            result.forEach((s, integer) ->
+            Optional.ofNullable(result).orElse(Collections.emptyMap()).forEach((s, integer) ->
                     builder.append(s.split("=")[0])
                             .append(",")
                             .append(integer)
