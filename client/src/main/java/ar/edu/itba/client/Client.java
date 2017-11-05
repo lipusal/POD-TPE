@@ -3,6 +3,7 @@ package ar.edu.itba.client;
 import ar.edu.itba.CensusEntry;
 import ar.edu.itba.Region;
 import ar.edu.itba.args.Util;
+import ar.edu.itba.client.strategy.Q5Runner;
 import ar.edu.itba.client.util.ClientArguments;
 import ar.edu.itba.client.util.CsvParser;
 import ar.edu.itba.client.util.Timer;
@@ -184,23 +185,15 @@ public class Client {
                 System.out.println("Done");
                 break;
             case 5:
-                logger.info("Running map/reduce");
-                ReducingSubmittableJob<String, Region, Double> future5 = job
-                        .mapper(new CensusQuery5Mapper())
-                        .reducer(new CensusQuery5ReducerFactory());
-
-                //Submit and block until done
+                Q5Runner runner = new Q5Runner(hz, args);
+                runner.readData();
+                runner.uploadData();
                 timer.queryStart();
-                Map<Region, Double> result3 = future5.submit(new CensusQuery5Collator()).get();
-
-                //QUERY5
+                runner.runQuery();
+                runner.writeResult();
                 timer.queryEnd();
-                for(Map.Entry<Region, Double> entry : result3.entrySet()){
-                    System.out.printf(Locale.US, "%s,%.2f\n",entry.getKey().toString(),entry.getValue());
-                }
-
-                logger.info("End of map/reduce");
                 System.out.println("Done");
+                System.out.println(runner.getResultString());
                 break;
             case 6:
                 int minLimit = 5;
