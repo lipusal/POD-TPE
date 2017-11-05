@@ -7,7 +7,7 @@ import com.hazelcast.mapreduce.ReducerFactory;
 import java.util.HashSet;
 import java.util.Set;
 
-public class RegionToHomeCountReducer implements ReducerFactory<Region, Long, Integer> {
+public class CensusQuery4ReducerFactory implements ReducerFactory<Region, Long, Integer> {
 
     @Override
     public Reducer<Long, Integer> newReducer(Region region) {

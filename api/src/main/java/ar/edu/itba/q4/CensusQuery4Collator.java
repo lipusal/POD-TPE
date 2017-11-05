@@ -7,7 +7,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-public class HomeCountCollator implements Collator<Map.Entry<Region, Integer>, Map<Region, Integer>> {
+public class CensusQuery4Collator implements Collator<Map.Entry<Region, Integer>, Map<Region, Integer>> {
 
     @Override
     public Map<Region, Integer> collate(Iterable<Map.Entry<Region, Integer>> values) {
