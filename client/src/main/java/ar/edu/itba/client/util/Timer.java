@@ -82,8 +82,10 @@ public class Timer {
         LocalDateTime now = LocalDateTime.now();
         timestamps.add(now);
         timeWriter.write(now + " - Query end\n");
-        Duration elapsedTime = Duration.between(timestamps.get(0), now);
-        timeWriter.write("Total elapsed time: " + elapsedTime.toString() + "\n");
+        timeWriter.write("----------------------\n");
+        timeWriter.write("Data read & upload time: " + Duration.between(timestamps.get(0), timestamps.get(1)).toString() + "\n");
+        timeWriter.write("Query execute & save time: " + Duration.between(timestamps.get(2), timestamps.get(3)).toString() + "\n");
+        timeWriter.write("Total elapsed time: " + Duration.between(timestamps.get(0), now).toString() + "\n");
         timeWriter.close();
         status = Status.DONE;
     }
