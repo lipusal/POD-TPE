@@ -42,10 +42,11 @@ public class Q4Runner extends BaseQueryRunner {
         fw.close();
     }
 
-    private String getResultString() {
+    @Override
+    public String getResultString() {
         StringBuilder stringBuilder = new StringBuilder();
         for (Map.Entry<Region, Integer> entry : result.entrySet()) {
-            stringBuilder.append(entry.getKey() + "," + entry.getValue() + "\n");
+            stringBuilder.append(entry.getKey()).append(",").append(entry.getValue()).append("\n");
         }
         return stringBuilder.toString();
     }

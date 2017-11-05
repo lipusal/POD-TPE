@@ -4,6 +4,7 @@ import ar.edu.itba.CensusEntry;
 import ar.edu.itba.Region;
 import ar.edu.itba.args.Util;
 import ar.edu.itba.client.strategy.Q3Runner;
+import ar.edu.itba.client.strategy.Q4Runner;
 import ar.edu.itba.client.util.ClientArguments;
 import ar.edu.itba.client.util.CsvParser;
 import ar.edu.itba.client.util.Timer;
@@ -194,6 +195,16 @@ public class Client {
 
                 logger.info("End of map/reduce");
                 System.out.println("Done");
+
+//                Q4Runner runner = new Q4Runner(hz, args);
+//                runner.readData();
+//                runner.uploadData();
+//                timer.queryStart();
+//                runner.runQuery();
+//                runner.writeResult();
+//                timer.queryEnd();
+//                System.out.println("Done");
+//                System.out.println(runner.getResultString());
                 break;
             case 5:
                 logger.info("Running map/reduce");
