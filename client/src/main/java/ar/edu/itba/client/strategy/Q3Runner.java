@@ -3,20 +3,15 @@ package ar.edu.itba.client.strategy;
 import ar.edu.itba.CensusEntry;
 import ar.edu.itba.Region;
 import ar.edu.itba.client.util.ClientArguments;
-import ar.edu.itba.client.util.CsvParser;
 import ar.edu.itba.q3.CensusQuery3Collator;
 import ar.edu.itba.q3.CensusQuery3CombinerFactory;
 import ar.edu.itba.q3.CensusQuery3Mapper;
 import ar.edu.itba.q3.CensusQuery3ReducerFactory;
 import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.core.IList;
-import com.hazelcast.mapreduce.Job;
-import com.hazelcast.mapreduce.JobCompletableFuture;
 import com.hazelcast.mapreduce.KeyValueSource;
 
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.Collections;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
@@ -43,7 +38,7 @@ public class Q3Runner extends BaseQueryRunner {
     public String getResultString() {
         StringBuilder stringBuilder = new StringBuilder();
         Optional.ofNullable(result).orElse(Collections.emptyMap()).forEach((key, value) ->
-                stringBuilder.append(key).append(String.format(",%.2f\n", value)));
+                stringBuilder.append(key).append(String.format(Locale.US, ",%.2f\n", value)));
         return stringBuilder.toString();
     }
 }
