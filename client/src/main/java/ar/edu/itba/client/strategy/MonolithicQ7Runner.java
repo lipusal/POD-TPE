@@ -2,7 +2,9 @@ package ar.edu.itba.client.strategy;
 
 
 import ar.edu.itba.CensusEntry;
+import ar.edu.itba.Tuple;
 import ar.edu.itba.client.util.ClientArguments;
+import ar.edu.itba.client.util.CsvParser;
 import ar.edu.itba.q7.first.CensusQuery7FirstMapper;
 import ar.edu.itba.q7.first.CensusQuery7FirstReducerFactory;
 import ar.edu.itba.q7.second.CensusQuery7SecondCollator;
@@ -12,21 +14,30 @@ import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
 import com.hazelcast.mapreduce.KeyValueSource;
 
-import java.util.Collections;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
 
 public class MonolithicQ7Runner extends BaseQueryRunner {
     private final String STEP_1_COLLECTION;
     private final String STEP_2_COLLECTION;
     private Map<String, Integer> result;
+    private IMap<Long, Tuple<String, String>> iData;
+    private Map<Long, Tuple<String, String>> dataMap;
+    private long id = 1;
 
     public MonolithicQ7Runner(HazelcastInstance client, ClientArguments arguments) {
         super(client, arguments);
         STEP_1_COLLECTION = getCollectionName() + "_1";
         STEP_2_COLLECTION = getCollectionName() + "_2";
+    }
+
+    @Override
+    public void readData() {
+        CsvParser parser = new CsvParser(arguments.getInFile().toPath());
+        dataMap = new HashMap<>();
+        parser.parse(splitLine ->
+                dataMap.put(id++, new Tuple<>(CsvParser.getDepartment(splitLine), CsvParser.getProvince(splitLine)))
+        );
     }
 
     @Override
@@ -39,7 +50,7 @@ public class MonolithicQ7Runner extends BaseQueryRunner {
     @Override
     public void runQuery() throws ExecutionException, InterruptedException {
         // First step
-        KeyValueSource<Long, CensusEntry> source1 = KeyValueSource.fromMap(iData);
+        KeyValueSource<Long, Tuple<String, String>> source1 = KeyValueSource.fromMap(iData);
         Map<String, Set<String>> tempResult = getJobTracker().newJob(source1)
                 .mapper(new CensusQuery7FirstMapper())
                 .reducer(new CensusQuery7FirstReducerFactory())

@@ -88,7 +88,7 @@ public class Client {
             case 6:
                 return new Q6Runner(client, arguments);
             case 7:
-                return new Q7Runner(client, arguments);
+                return new MonolithicQ7Runner(client, arguments);
             default:
                 throw new IllegalArgumentException("Invalid query number " + arguments.getQueryNumber() + ". Valid numbers are 1-7.");
         }

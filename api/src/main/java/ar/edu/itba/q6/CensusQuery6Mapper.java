@@ -5,10 +5,10 @@ import ar.edu.itba.Region;
 import com.hazelcast.mapreduce.Context;
 import com.hazelcast.mapreduce.Mapper;
 
-public class CensusQuery6Mapper implements Mapper<Long, CensusEntry, String, Integer>{
+public class CensusQuery6Mapper implements Mapper<Long, String, String, Integer>{
 
     @Override
-    public void map(Long key, CensusEntry censusEntry, Context<String, Integer> context) {
-        context.emit(censusEntry.getDepartment(),1);
+    public void map(Long key, String department, Context<String, Integer> context) {
+        context.emit(department,1);
     }
 }
