@@ -54,6 +54,6 @@ public abstract class BaseQueryRunner implements QueryRunner {
     }
 
     protected String getCollectionName() {
-        return ClientArguments.GROUP_NAME + "_data_" + arguments.getQueryNumber();
+        return ClientArguments.GROUP_NAME + "_data";
     }
 }
