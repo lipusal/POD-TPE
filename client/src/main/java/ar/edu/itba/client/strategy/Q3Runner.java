@@ -21,8 +21,6 @@ import java.util.concurrent.ExecutionException;
 
 
 public class Q3Runner extends BaseQueryRunner {
-
-    private IList<CensusEntry> iData;
     private Map<Region, Double> result;
 
     public Q3Runner(HazelcastInstance client, ClientArguments arguments) {
