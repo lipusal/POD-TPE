@@ -43,11 +43,7 @@ public class Q3Runner extends BaseQueryRunner {
     }
 
     @Override
-    public void printResult() {
-        System.out.println(getResultString());
-    }
-
-    private String getResultString() {
+    public String getResultString() {
         StringBuilder stringBuilder = new StringBuilder();
         for (Map.Entry<Region, Double> entry : result.entrySet()) {
             stringBuilder.append(entry.getKey()).append(String.format(",%.2f\n", entry.getValue()));
