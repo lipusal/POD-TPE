@@ -26,7 +26,7 @@ public class Q3Runner extends BaseQueryRunner {
 
     @Override
     public void runQuery() throws ExecutionException, InterruptedException {
-        KeyValueSource<String, CensusEntry> keyValueSource = KeyValueSource.fromMap(iData);
+        KeyValueSource<Long, CensusEntry> keyValueSource = KeyValueSource.fromMap(iData);
         result = getJobTracker().newJob(keyValueSource)
                 .mapper(new CensusQuery3Mapper())
                 .combiner(new CensusQuery3CombinerFactory())

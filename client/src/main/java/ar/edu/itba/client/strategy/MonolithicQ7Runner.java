@@ -39,7 +39,7 @@ public class MonolithicQ7Runner extends BaseQueryRunner {
     @Override
     public void runQuery() throws ExecutionException, InterruptedException {
         // First step
-        KeyValueSource<String, CensusEntry> source1 = KeyValueSource.fromMap(iData);
+        KeyValueSource<Long, CensusEntry> source1 = KeyValueSource.fromMap(iData);
         Map<String, Set<String>> tempResult = getJobTracker().newJob(source1)
                 .mapper(new CensusQuery7FirstMapper())
                 .reducer(new CensusQuery7FirstReducerFactory())

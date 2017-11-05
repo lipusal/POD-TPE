@@ -29,7 +29,7 @@ public class Q6Runner extends BaseQueryRunner {
 
     @Override
     public void runQuery() throws ExecutionException, InterruptedException {
-        KeyValueSource<String, CensusEntry> keyValueSource = KeyValueSource.fromMap(iData);
+        KeyValueSource<Long, CensusEntry> keyValueSource = KeyValueSource.fromMap(iData);
         result = getJobTracker().newJob(keyValueSource)
                 .mapper(new CensusQuery6Mapper())
                 .combiner(new CensusQuery6CombinerFactory())

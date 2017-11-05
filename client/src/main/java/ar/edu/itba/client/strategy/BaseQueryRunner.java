@@ -18,8 +18,8 @@ public abstract class BaseQueryRunner implements QueryRunner {
     protected final HazelcastInstance client;
     protected final ClientArguments arguments;
     protected List<CensusEntry> data;
-    protected Map<String, CensusEntry> dataMap;
-    protected IMap<String, CensusEntry> iData;
+    protected Map<Long, CensusEntry> dataMap;
+    protected IMap<Long, CensusEntry> iData;
     private long key = 1;
 
 
@@ -36,7 +36,7 @@ public abstract class BaseQueryRunner implements QueryRunner {
         CsvParser parser = new CsvParser(arguments.getInFile().toPath());
         data = parser.parse();
         this.dataMap = new HashMap<>(data.size());
-        data.forEach(censusEntry -> dataMap.put(Long.toString(key++), censusEntry));
+        data.forEach(censusEntry -> dataMap.put(key++, censusEntry));
     }
 
     /**

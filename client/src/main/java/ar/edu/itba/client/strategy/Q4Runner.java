@@ -26,8 +26,8 @@ public class Q4Runner extends BaseQueryRunner {
 
     @Override
     public void runQuery() throws ExecutionException, InterruptedException {
-        KeyValueSource<String, CensusEntry> keyValueSource = KeyValueSource.fromMap(iData);
-        Job<String, CensusEntry> job = getJobTracker().newJob(keyValueSource);
+        KeyValueSource<Long, CensusEntry> keyValueSource = KeyValueSource.fromMap(iData);
+        Job<Long, CensusEntry> job = getJobTracker().newJob(keyValueSource);
         JobCompletableFuture<Map<Region, Integer>> completableFuture = job
                 .mapper(new CensusQuery4Mapper())
                 .reducer(new CensusQuery4ReducerFactory())

@@ -81,7 +81,7 @@ public class Q7Runner extends BaseQueryRunner {
 
         @Override
         public void runQuery() throws ExecutionException, InterruptedException {
-            KeyValueSource<String, CensusEntry> source = KeyValueSource.fromMap(iData);
+            KeyValueSource<Long, CensusEntry> source = KeyValueSource.fromMap(iData);
             result = getJobTracker().newJob(source)
                     .mapper(new CensusQuery7FirstMapper())
                     .reducer(new CensusQuery7FirstReducerFactory())

@@ -7,7 +7,7 @@ import com.hazelcast.nio.serialization.DataSerializable;
 
 import java.io.IOException;
 
-public class LongTuple implements DataSerializable{
+public class LongTuple implements DataSerializable {
 
     private long key;
     private long value;
