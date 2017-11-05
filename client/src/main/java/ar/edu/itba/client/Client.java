@@ -4,6 +4,9 @@ import ar.edu.itba.CensusEntry;
 import ar.edu.itba.Region;
 import ar.edu.itba.args.Util;
 import ar.edu.itba.client.strategy.Q5Runner;
+import ar.edu.itba.client.strategy.Q3Runner;
+import ar.edu.itba.client.strategy.Q4Runner;
+import ar.edu.itba.client.strategy.Q6Runner;
 import ar.edu.itba.client.util.ClientArguments;
 import ar.edu.itba.client.util.CsvParser;
 import ar.edu.itba.client.util.Timer;
@@ -154,35 +157,26 @@ public class Client {
                 System.out.println(ans2.toString());
                 break;
             case 3:
-                logger.info("Running map/reduce");
+                Q3Runner runner = new Q3Runner(hz, args);
+                runner.readData();
+                runner.uploadData();
                 timer.queryStart();
-
-                //QUERY3
-                JobCompletableFuture<Map<Region, Double>> future3 = job.mapper(new CensusQuery3Mapper()).combiner(new CensusQuery3CombinerFactory()).reducer(new CensusQuery3ReducerFactory()).submit(new CensusQuery3Collator());
-
-                Map<Region, Double> ans3 = future3.get();
-
+                runner.runQuery();
+                runner.writeResult();
                 timer.queryEnd();
-                logger.info("End of map/reduce");
                 System.out.println("Done");
-                for (Map.Entry<Region, Double> entry : ans3.entrySet()) {
-                    System.out.printf(entry.getKey() + ",%.2f\n",entry.getValue());
-                }
+                System.out.println(runner.getResultString());
                 break;
             case 4:
-                ReducingSubmittableJob<String, Region, Integer> future = job
-                        .mapper(new CensusToRegionHomeIdMapper())
-                        .reducer(new RegionToHomeCountReducer());
-
-                //Submit and block until done
+                Q4Runner runner = new Q4Runner(hz, args);
+                runner.readData();
+                runner.uploadData();
                 timer.queryStart();
-                Map<Region, Integer> result = future.submit(new HomeCountCollator()).get();
-                //TODO write result to file
+                runner.runQuery();
+                runner.writeResult();
                 timer.queryEnd();
-                System.out.println(result);
-
-                logger.info("End of map/reduce");
                 System.out.println("Done");
+                System.out.println(runner.getResultString());
                 break;
             case 5:
                 Q5Runner runner = new Q5Runner(hz, args);
@@ -196,19 +190,15 @@ public class Client {
                 System.out.println(runner.getResultString());
                 break;
             case 6:
-                int minLimit = 5;
-                logger.info("Running map/reduce");
+                Q6Runner runner = new Q6Runner(hz, args);
+                runner.readData();
+                runner.uploadData();
                 timer.queryStart();
-
-                //QUERY6
-                JobCompletableFuture<Map<String, Integer>> future6 = job.mapper(new CensusQuery6Mapper()).combiner(new CensusQuery6CombinerFactory()).reducer(new CensusQuery6ReducerFactory()).submit(new CensusQuery6Collator(minLimit));
-
-                Map<String, Integer> ans6 = future6.get();
-
+                runner.runQuery();
+                runner.writeResult();
                 timer.queryEnd();
-                logger.info("End of map/reduce");
                 System.out.println("Done");
-                System.out.println(ans6.toString());
+                System.out.println(runner.getResultString());
                 break;
         }
     }
