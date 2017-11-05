@@ -197,29 +197,15 @@ public class Client {
                 System.out.println("Done");
                 break;
             case 6:
-                int minLimit = 5;
-                logger.info("Running map/reduce");
+                Q6Runner runner = new Q6Runner(hz, args);
+                runner.readData();
+                runner.uploadData();
                 timer.queryStart();
-
-                //QUERY6
-                JobCompletableFuture<Map<String, Integer>> future6 = job.mapper(new CensusQuery6Mapper()).combiner(new CensusQuery6CombinerFactory()).reducer(new CensusQuery6ReducerFactory()).submit(new CensusQuery6Collator(minLimit));
-
-                Map<String, Integer> ans6 = future6.get();
-
+                runner.runQuery();
+                runner.writeResult();
                 timer.queryEnd();
-                logger.info("End of map/reduce");
                 System.out.println("Done");
-                System.out.println(ans6.toString());
-
-//                Q6Runner runner = new Q6Runner(hz, args);
-//                runner.readData();
-//                runner.uploadData();
-//                timer.queryStart();
-//                runner.runQuery();
-//                runner.writeResult();
-//                timer.queryEnd();
-//                System.out.println("Done");
-//                System.out.println(runner.getResultString());
+                System.out.println(runner.getResultString());
                 break;
         }
     }

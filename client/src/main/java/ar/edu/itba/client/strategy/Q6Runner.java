@@ -28,16 +28,11 @@ public class Q6Runner extends BaseQueryRunner {
     @Override
     public void runQuery() throws ExecutionException, InterruptedException {
         KeyValueSource<String, CensusEntry> keyValueSource = KeyValueSource.fromList(iData);
-        Job<String, CensusEntry> job = getJobTracker().newJob(keyValueSource);
-        JobCompletableFuture<Map<String, Integer>> future6 = job.mapper(new CensusQuery6Mapper()).combiner(new CensusQuery6CombinerFactory()).reducer(new CensusQuery6ReducerFactory()).submit(new CensusQuery6Collator(arguments.getN()));
-        result = future6.get();
-    }
-
-    @Override
-    public void writeResult() throws IOException {
-        FileWriter fw = new FileWriter(arguments.getOutFile());
-        fw.write(getResultString());
-        fw.close();
+        result = getJobTracker().newJob(keyValueSource)
+                .mapper(new CensusQuery6Mapper())
+                .combiner(new CensusQuery6CombinerFactory())
+                .reducer(new CensusQuery6ReducerFactory())
+                .submit(new CensusQuery6Collator(arguments.getN())).get();
     }
 
     @Override
