@@ -17,6 +17,8 @@ public class LongTuple implements DataSerializable {
         this.value = value;
     }
 
+    public LongTuple() { }
+
     public long getKey() {
         return key;
     }
