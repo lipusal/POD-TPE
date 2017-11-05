@@ -28,7 +28,8 @@ public interface QueryRunner {
     void writeResult() throws IOException;
 
     /**
-     * Print the result in a nice format to STDOUT. Optional method, default does nothing.
+     * Get a formatted String representation of the result. Output should be suitable to be used in {@link #writeResult()} .
+     * @return The formatted String representation of the query's result.
      */
-    default void printResult() {}
+    String getResultString();
 }

@@ -7,6 +7,8 @@ import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IList;
 import com.hazelcast.mapreduce.JobTracker;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.List;
 
 public abstract class BaseQueryRunner implements QueryRunner {
@@ -39,6 +41,13 @@ public abstract class BaseQueryRunner implements QueryRunner {
         iData = client.getList(getCollectionName());
         iData.clear();
         iData.addAll(data);
+    }
+
+    @Override
+    public void writeResult() throws IOException {
+        FileWriter fw = new FileWriter(arguments.getOutFile());
+        fw.write(getResultString());
+        fw.close();
     }
 
     protected JobTracker getJobTracker() {

@@ -3,11 +3,9 @@ package ar.edu.itba.client.strategy;
 import ar.edu.itba.CensusEntry;
 import ar.edu.itba.Region;
 import ar.edu.itba.client.util.ClientArguments;
-import ar.edu.itba.client.util.CsvParser;
 import ar.edu.itba.q1.CensusQuery1Mapper;
 import ar.edu.itba.q1.CensusQuery1ReducerFactory;
 import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.core.IList;
 import com.hazelcast.mapreduce.Job;
 import com.hazelcast.mapreduce.JobCompletableFuture;
 import com.hazelcast.mapreduce.KeyValueSource;
@@ -44,7 +42,10 @@ public class Q1Runner extends BaseQueryRunner {
         fw.close();
     }
 
-    public Map<Region, Integer> getResult() {
-        return result;
+    @Override
+    public String getResultString() {
+        StringBuilder builder = new StringBuilder();
+        result.forEach((key, value) -> builder.append(key).append(",").append(value).append("\n"));
+        return builder.toString();
     }
 }
