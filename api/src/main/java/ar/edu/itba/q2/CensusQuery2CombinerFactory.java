@@ -15,7 +15,7 @@ public class CensusQuery2CombinerFactory implements CombinerFactory<String, Inte
 
         @Override
         public void combine(Integer value) {
-            count = count + value;
+            count += value;
         }
 
         @Override

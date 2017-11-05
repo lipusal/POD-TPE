@@ -1,23 +1,19 @@
 package ar.edu.itba.q2;
 
-import ar.edu.itba.CensusEntry;
+import ar.edu.itba.Tuple;
 import com.hazelcast.mapreduce.Context;
 
-public class CensusQuery2Mapper implements com.hazelcast.mapreduce.Mapper<Long, CensusEntry, String, Integer> {
+public class CensusQuery2Mapper implements com.hazelcast.mapreduce.Mapper<Long, Tuple<String, String>, String, Integer> {
+    private final String prov;
 
-    private String prov;
-
-    public CensusQuery2Mapper(String searchedProvince){
+    public CensusQuery2Mapper(String searchedProvince) {
         this.prov = searchedProvince;
     }
 
     @Override
-    public void map(Long s, CensusEntry censusEntry, Context<String, Integer> context) {
-        String provinceName = censusEntry.getProvince();
-        String departmentName = censusEntry.getDepartment();
-
-        if(provinceName.equals(prov)){
-            context.emit(departmentName, 1);
+    public void map(Long unusedKey, Tuple<String, String> departmentProvinceTuple, Context<String, Integer> context) {
+        if(departmentProvinceTuple.getSecond().equals(prov)) {
+            context.emit(departmentProvinceTuple.getFirst(), 1);
         }
     }
 }
