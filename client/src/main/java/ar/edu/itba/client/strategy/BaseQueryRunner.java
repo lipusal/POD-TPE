@@ -10,18 +10,13 @@ import com.hazelcast.mapreduce.JobTracker;
 
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public abstract class BaseQueryRunner implements QueryRunner {
     protected final HazelcastInstance client;
     protected final ClientArguments arguments;
-    protected List<CensusEntry> data;
     protected Map<Long, CensusEntry> dataMap;
     protected IMap<Long, CensusEntry> iData;
-    private long key = 1;
-
 
     public BaseQueryRunner(HazelcastInstance client, ClientArguments arguments) {
         this.client = client;
@@ -34,9 +29,7 @@ public abstract class BaseQueryRunner implements QueryRunner {
     @Override
     public void readData() {
         CsvParser parser = new CsvParser(arguments.getInFile().toPath());
-        data = parser.parse();
-        this.dataMap = new HashMap<>(data.size());
-        data.forEach(censusEntry -> dataMap.put(key++, censusEntry));
+        this.dataMap = parser.parse();
     }
 
     /**

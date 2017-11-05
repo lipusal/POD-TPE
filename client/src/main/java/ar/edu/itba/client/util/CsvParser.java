@@ -3,13 +3,13 @@ package ar.edu.itba.client.util;
 import ar.edu.itba.CensusEntry;
 import ar.edu.itba.Status;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Function;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class CsvParser {
     private final Path path;
@@ -18,13 +18,16 @@ public class CsvParser {
         this.path = path;
     }
 
-    public List<CensusEntry> parse() {
-        List<CensusEntry> result = null;
+    public Map<Long, CensusEntry> parse() {
+        Map<Long, CensusEntry> result = new HashMap<>();
         try {
-            Stream<String> lines = Files.lines(path);
-            result = lines.map(lineConsumer).collect(Collectors.toList());
-            lines.close();
-
+            BufferedReader br = new BufferedReader(new FileReader(path.toFile()));
+            String line;
+            long key = 1;
+            while((line = br.readLine()) != null) {
+                result.put(key++, lineConsumer.apply(line));
+            }
+            br.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
