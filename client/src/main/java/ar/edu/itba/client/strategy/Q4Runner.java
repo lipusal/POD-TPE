@@ -4,6 +4,7 @@ package ar.edu.itba.client.strategy;
 import ar.edu.itba.Region;
 import ar.edu.itba.Tuple;
 import ar.edu.itba.client.util.ClientArguments;
+import ar.edu.itba.client.util.CsvParser;
 import ar.edu.itba.q4.CensusQuery4Collator;
 import ar.edu.itba.q4.CensusQuery4Mapper;
 import ar.edu.itba.q4.CensusQuery4ReducerFactory;
@@ -22,6 +23,7 @@ import java.util.concurrent.ExecutionException;
 public class Q4Runner extends BaseQueryRunner {
     private Map<Region, Integer> result;
     private IMap<Long, Tuple<Region, Long>> iData;
+    private Map<Long, Tuple<Region, Long>> dataMap;
     private long id = 1;
 
 
@@ -30,14 +32,19 @@ public class Q4Runner extends BaseQueryRunner {
     }
 
     @Override
+    public void readData() {
+        CsvParser parser = new CsvParser(arguments.getInFile().toPath());
+        dataMap = new HashMap<>();
+        parser.parse(splitLine ->
+            dataMap.put(id++, new Tuple<>(Region.fromString(CsvParser.getProvince(splitLine)), CsvParser.getHomeId(splitLine)))
+        );
+    }
+
+    @Override
     public void uploadData() {
         iData = client.getMap(getCollectionName());
         iData.clear();
-        Map<Long, Tuple<Region, Long>> data2 = new HashMap<>();
-        dataMap.forEach((unusedKey, censusEntry) -> {
-            data2.put(id++, new Tuple<>(censusEntry.getRegion(), censusEntry.getHomeId()));
-        });
-        iData.putAll(data2);
+        iData.putAll(dataMap);
     }
 
     @Override

@@ -15,6 +15,7 @@ import java.util.Map;
 public abstract class BaseQueryRunner implements QueryRunner {
     protected final HazelcastInstance client;
     protected final ClientArguments arguments;
+    // TODO delete these, each runner should have its own typed collection
     protected Map<Long, CensusEntry> dataMap;
     protected IMap<Long, CensusEntry> iData;
 
