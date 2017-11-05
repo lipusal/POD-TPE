@@ -18,9 +18,6 @@ import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 public class Q1Runner extends BaseQueryRunner {
-    // TODO move this to BaseQueryRunner, make BaseQueryRunner typed
-    private IList<CensusEntry> iData;
-
     private Map<Region, Integer> result;
 
     public Q1Runner(HazelcastInstance client, ClientArguments arguments) {
