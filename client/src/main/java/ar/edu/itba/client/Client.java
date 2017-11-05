@@ -4,6 +4,7 @@ import ar.edu.itba.CensusEntry;
 import ar.edu.itba.Region;
 import ar.edu.itba.args.Util;
 import ar.edu.itba.client.strategy.Q3Runner;
+import ar.edu.itba.client.strategy.Q4Runner;
 import ar.edu.itba.client.util.ClientArguments;
 import ar.edu.itba.client.util.CsvParser;
 import ar.edu.itba.client.util.Timer;
@@ -165,19 +166,15 @@ public class Client {
                 System.out.println(runner.getResultString());
                 break;
             case 4:
-                ReducingSubmittableJob<String, Region, Integer> future = job
-                        .mapper(new CensusToRegionHomeIdMapper())
-                        .reducer(new RegionToHomeCountReducer());
-
-                //Submit and block until done
+                Q4Runner runner = new Q4Runner(hz, args);
+                runner.readData();
+                runner.uploadData();
                 timer.queryStart();
-                Map<Region, Integer> result = future.submit(new HomeCountCollator()).get();
-                //TODO write result to file
+                runner.runQuery();
+                runner.writeResult();
                 timer.queryEnd();
-                System.out.println(result);
-
-                logger.info("End of map/reduce");
                 System.out.println("Done");
+                System.out.println(runner.getResultString());
                 break;
             case 5:
                 logger.info("Running map/reduce");
