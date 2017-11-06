@@ -57,7 +57,11 @@ public class Q3Runner extends BaseQueryRunner {
     public String getResultString() {
         StringBuilder stringBuilder = new StringBuilder();
         Optional.ofNullable(result).orElse(Collections.emptyMap()).forEach((key, value) ->
-                stringBuilder.append(key).append(String.format(Locale.US, ",%.2f\n", value)));
+                stringBuilder
+                        .append(key)
+                        .append(",")
+                        .append(truncateDecimal(value, 2))
+                        .append("\n"));
         return stringBuilder.toString();
     }
 }

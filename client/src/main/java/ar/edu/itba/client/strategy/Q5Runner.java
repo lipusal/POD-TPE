@@ -55,7 +55,11 @@ public class Q5Runner extends BaseQueryRunner {
     public String getResultString() {
         StringBuilder builder = new StringBuilder();
         Optional.ofNullable(result).orElse(Collections.emptyMap()).forEach((key, value) ->
-                builder.append(String.format(Locale.US, "%s,%.2f\n", key.toString(), value))
+                builder
+                        .append(key.toString())
+                        .append(",")
+                        .append(truncateDecimal(value, 2))
+                        .append("\n")
         );
         return builder.toString();
     }

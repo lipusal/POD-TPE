@@ -6,6 +6,7 @@ import com.hazelcast.mapreduce.JobTracker;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Locale;
 
 public abstract class BaseQueryRunner implements QueryRunner {
     protected final HazelcastInstance client;
@@ -29,5 +30,15 @@ public abstract class BaseQueryRunner implements QueryRunner {
 
     protected String getCollectionName() {
         return ClientArguments.GROUP_NAME + "_data";
+    }
+
+    /**
+     * Truncate - don't round - numbers to a given number of decimal places
+     * @param value     The value to truncate
+     * @param precision The precision to truncate to
+     * @return          The truncated value
+     */
+    protected String truncateDecimal(double value, int precision) {
+        return String.format(Locale.US, "%."+(precision+1)+"f", value).replaceAll("\\d$", "");
     }
 }
