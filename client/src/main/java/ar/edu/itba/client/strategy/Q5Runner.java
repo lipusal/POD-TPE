@@ -1,6 +1,5 @@
 package ar.edu.itba.client.strategy;
 
-import ar.edu.itba.CensusEntry;
 import ar.edu.itba.Region;
 import ar.edu.itba.Tuple;
 import ar.edu.itba.client.util.ClientArguments;
@@ -58,7 +57,7 @@ public class Q5Runner extends BaseQueryRunner {
                 builder
                         .append(key.toString())
                         .append(",")
-                        .append(truncateDecimal(value, 2))
+                        .append(formatDecimal(value))
                         .append("\n")
         );
         return builder.toString();

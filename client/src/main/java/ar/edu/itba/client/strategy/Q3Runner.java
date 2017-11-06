@@ -60,7 +60,7 @@ public class Q3Runner extends BaseQueryRunner {
                 stringBuilder
                         .append(key)
                         .append(",")
-                        .append(truncateDecimal(value, 2))
+                        .append(formatDecimal(value))
                         .append("\n"));
         return stringBuilder.toString();
     }

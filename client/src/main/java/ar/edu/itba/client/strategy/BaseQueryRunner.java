@@ -6,15 +6,26 @@ import com.hazelcast.mapreduce.JobTracker;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.Locale;
 
 public abstract class BaseQueryRunner implements QueryRunner {
     protected final HazelcastInstance client;
     protected final ClientArguments arguments;
+    private final DecimalFormat decimalFormat;
 
     public BaseQueryRunner(HazelcastInstance client, ClientArguments arguments) {
         this.client = client;
         this.arguments = arguments;
+
+        decimalFormat = new DecimalFormat();
+        decimalFormat.setDecimalFormatSymbols(DecimalFormatSymbols.getInstance(Locale.US));    // Separate with .
+        decimalFormat.setGroupingUsed(false);                                                  // Don't group with ,
+        decimalFormat.setMinimumFractionDigits(2);                                             // Use exactly 2 digits
+        decimalFormat.setMaximumFractionDigits(2);
+        decimalFormat.setRoundingMode(RoundingMode.FLOOR);                                     // Don't round
     }
 
     @Override
@@ -33,12 +44,11 @@ public abstract class BaseQueryRunner implements QueryRunner {
     }
 
     /**
-     * Truncate - don't round - numbers to a given number of decimal places
+     * Truncate - don't round - numbers to 2 decimal places
      * @param value     The value to truncate
-     * @param precision The precision to truncate to
      * @return          The truncated value
      */
-    protected String truncateDecimal(double value, int precision) {
-        return String.format(Locale.US, "%."+(precision+1)+"f", value).replaceAll("\\d$", "");
+    protected String formatDecimal(double value) {
+        return decimalFormat.format(value);
     }
 }
