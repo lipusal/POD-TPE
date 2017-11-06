@@ -3,6 +3,7 @@ package ar.edu.itba.client.strategy;
 import ar.edu.itba.Region;
 import ar.edu.itba.client.util.ClientArguments;
 import ar.edu.itba.client.util.CsvParser;
+import ar.edu.itba.q1.CensusQuery1Collator;
 import ar.edu.itba.q1.CensusQuery1CombinerFactory;
 import ar.edu.itba.q1.CensusQuery1Mapper;
 import ar.edu.itba.q1.CensusQuery1ReducerFactory;
@@ -49,7 +50,7 @@ public class Q1Runner extends BaseQueryRunner {
                 .mapper(new CensusQuery1Mapper())
                 .combiner(new CensusQuery1CombinerFactory())
                 .reducer(new CensusQuery1ReducerFactory())
-                .submit().get();
+                .submit(new CensusQuery1Collator()).get();
     }
 
     @Override
