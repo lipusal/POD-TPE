@@ -5,6 +5,7 @@ import com.hazelcast.nio.ObjectDataOutput;
 import com.hazelcast.nio.serialization.DataSerializable;
 
 import java.io.IOException;
+import java.util.Objects;
 
 public class Tuple<T, U> implements DataSerializable {
 
@@ -37,5 +38,19 @@ public class Tuple<T, U> implements DataSerializable {
     public void readData(ObjectDataInput in) throws IOException {
         this.t = in.readObject();
         this.u = in.readObject();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Tuple<?, ?> tuple = (Tuple<?, ?>) o;
+        return Objects.equals(t, tuple.t) &&
+                Objects.equals(u, tuple.u);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(t, u);
     }
 }
