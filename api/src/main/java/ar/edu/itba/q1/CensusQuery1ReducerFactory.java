@@ -11,11 +11,11 @@ public class CensusQuery1ReducerFactory implements ReducerFactory<Region, Intege
     }
 
     private class CensusQuery1Reducer extends Reducer<Integer,Integer> {
-        private int count;
+        private int count = 0;
 
         @Override
         public void reduce(Integer value) {
-            count++;
+            count += value;
         }
 
         @Override
