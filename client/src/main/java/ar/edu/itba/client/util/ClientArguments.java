@@ -18,6 +18,7 @@ public class ClientArguments {
 
     // Credentials
     public static final String GROUP_NAME = "53384-54197-54859-55824";
+    public static final String WAIFUS = "Misa-Celty-Bulma-Taiga";
 
     public static final List<String> KNOWN_PROPERTIES = Arrays.asList("addresses", "query", "inPath", "outPath", "timeOutPath", "n", "prov");
 

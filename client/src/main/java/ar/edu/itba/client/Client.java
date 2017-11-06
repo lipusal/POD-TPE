@@ -37,7 +37,7 @@ public class Client {
         final ClientConfig ccfg = new ClientConfig()
                 .setGroupConfig(new GroupConfig()
                         .setName(ClientArguments.GROUP_NAME)
-                        .setPassword(ClientArguments.GROUP_NAME)
+                        .setPassword(ClientArguments.WAIFUS)
                 )
                 .setNetworkConfig(new ClientNetworkConfig()
                         .addAddress(args.getNodeIps().toArray(new String[0]))

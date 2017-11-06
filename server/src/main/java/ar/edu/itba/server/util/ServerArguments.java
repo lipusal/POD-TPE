@@ -11,6 +11,7 @@ public class ServerArguments {
 
     // Credentials
     public static final String GROUP_NAME = "53384-54197-54859-55824";
+    public static final String WAIFUS = "Misa-Celty-Bulma-Taiga";
 
     public static final List<String> KNOWN_PROPERTIES = Arrays.asList("addresses", "a", "interface", "i");
 

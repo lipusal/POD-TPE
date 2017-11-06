@@ -25,7 +25,7 @@ public class Server {
         Config config = new Config()
                 .setGroupConfig(new GroupConfig()
                         .setName(ServerArguments.GROUP_NAME)
-                        .setPassword(ServerArguments.GROUP_NAME)
+                        .setPassword(ServerArguments.WAIFUS)
                 )
                 .setNetworkConfig(new NetworkConfig()
                         .setJoin(new JoinConfig()
