@@ -13,18 +13,24 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 public class Client {
     private static Logger logger = LoggerFactory.getLogger(Client.class);
 
-    public static void main(String[] unusedArgs) throws IOException, ExecutionException, InterruptedException {
-        // Parse and validate arguments
+    public static void main(String[] cliArgs) throws IOException, ExecutionException, InterruptedException {
+        // 1) Add system properties (-Dx=y)
+        List<String> allArguments = Util.propertiesToArgs(System.getProperties(), ClientArguments.KNOWN_PROPERTIES);
+        // 2) Add program arguments
+        allArguments.addAll(Arrays.asList(cliArgs));
+        // 3) Parse and validate
         ClientArguments args = new ClientArguments();
         JCommander.newBuilder()
                 .addObject(args)
                 .build()
-                .parse(Util.propertiesToArgs(System.getProperties(), ClientArguments.KNOWN_PROPERTIES).toArray(new String[0]));
+                .parse(allArguments.toArray(new String[0]));
         args.postValidate();
 
         // Configure Hazelcast client
