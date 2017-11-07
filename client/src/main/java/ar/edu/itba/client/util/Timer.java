@@ -5,6 +5,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,6 +19,7 @@ public class Timer {
     private final FileWriter timeWriter;
     private Status status;
     private List<LocalDateTime> timestamps = new ArrayList<>(Status.values().length);
+    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss.SSSS");
 
     public Timer(File timeFile) throws IOException {
         this.timeWriter = new FileWriter(timeFile);
@@ -35,7 +37,7 @@ public class Timer {
         }
         LocalDateTime now = LocalDateTime.now();
         timestamps.add(now);
-        timeWriter.write(now + " - Data read start\n");
+        timeWriter.write(now.format(formatter) + " - Data read start\n");
         status = Status.READING_DATA;
     }
 
@@ -50,7 +52,7 @@ public class Timer {
         }
         LocalDateTime now = LocalDateTime.now();
         timestamps.add(now);
-        timeWriter.write(now + " - Data read end\n");
+        timeWriter.write(now.format(formatter) + " - Data read end\n");
         status = Status.READ_DATA;
     }
 
@@ -65,7 +67,7 @@ public class Timer {
         }
         LocalDateTime now = LocalDateTime.now();
         timestamps.add(now);
-        timeWriter.write(now + " - Query start\n");
+        timeWriter.write(now.format(formatter) + " - Query start\n");
         status = Status.EXECUTING_QUERY;
     }
 
@@ -81,7 +83,7 @@ public class Timer {
         }
         LocalDateTime now = LocalDateTime.now();
         timestamps.add(now);
-        timeWriter.write(now + " - Query end\n");
+        timeWriter.write(now.format(formatter) + " - Query end\n");
         timeWriter.write("----------------------\n");
         timeWriter.write("Data read & upload time: " + Duration.between(timestamps.get(0), timestamps.get(1)).toString() + "\n");
         timeWriter.write("Query execute & save time: " + Duration.between(timestamps.get(2), timestamps.get(3)).toString() + "\n");
