@@ -40,7 +40,9 @@ public class Q1Runner extends BaseQueryRunner {
     public void uploadData() {
         iData = client.getMap(getCollectionName());
         iData.clear();
-        iData.putAll(dataMap);
+        dataMap.entrySet().parallelStream().forEach(longRegionEntry -> {
+            iData.put(longRegionEntry.getKey(), longRegionEntry.getValue());
+        });
     }
 
     @Override
