@@ -15,7 +15,7 @@ public class CensusQuery6Collator implements Collator<Map.Entry<String, Integer>
 
     @Override
     public Map<String, Integer> collate(Iterable<Map.Entry<String, Integer>> values) {
-        return StreamSupport.stream(values.spliterator(), false)
+        return StreamSupport.stream(values.spliterator(), true)
                 .filter(stringIntegerEntry -> stringIntegerEntry.getValue() >= min)
                 .sorted(Map.Entry.comparingByValue(Collections.reverseOrder()))
                 .collect(Collectors.toMap(

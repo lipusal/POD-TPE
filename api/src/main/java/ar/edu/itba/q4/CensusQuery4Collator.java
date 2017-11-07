@@ -13,7 +13,7 @@ public class CensusQuery4Collator implements Collator<Map.Entry<Region, Integer>
     public Map<Region, Integer> collate(Iterable<Map.Entry<Region, Integer>> values) {
         // Iterable -> Java 8 stream, https://stackoverflow.com/a/23936723/2333689
         // TODO: Parallel?
-        return StreamSupport.stream(values.spliterator(), false)
+        return StreamSupport.stream(values.spliterator(), true)
                 .sorted(Map.Entry.comparingByValue(Collections.reverseOrder()))
                 .collect(Collectors.toMap(
                         Map.Entry::getKey,

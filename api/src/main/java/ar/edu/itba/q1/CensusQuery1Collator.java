@@ -14,7 +14,7 @@ public class CensusQuery1Collator implements Collator<Map.Entry<Region, Integer>
 
     @Override
     public Map<Region, Integer> collate(Iterable<Map.Entry<Region, Integer>> values) {
-        return StreamSupport.stream(values.spliterator(), false)
+        return StreamSupport.stream(values.spliterator(), true)
                 .sorted(Map.Entry.comparingByValue(Collections.reverseOrder()))
                 .collect(Collectors.toMap(
                         Map.Entry::getKey,

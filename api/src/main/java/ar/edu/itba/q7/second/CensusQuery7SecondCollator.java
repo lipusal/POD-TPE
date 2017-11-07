@@ -19,7 +19,7 @@ public class CensusQuery7SecondCollator implements Collator<Map.Entry<ProvinceTu
 
     @Override
     public Map<String, Integer> collate(Iterable<Map.Entry<ProvinceTuple, Integer>> values) {
-        return StreamSupport.stream(values.spliterator(), false)
+        return StreamSupport.stream(values.spliterator(), true)
                 .filter(counterEntry -> counterEntry.getValue() >= limit)
                 .sorted(Map.Entry.comparingByValue(Collections.reverseOrder()))
                 .collect(Collectors.toMap(
